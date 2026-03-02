@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Cou-pong</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dropdown.css">
+    <style>
+        .profile-container {
+            max-width: 800px;
+            margin: 4rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            padding: 2.5rem;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        /* Profile Avatar Styles */
+        .profile-avatar-wrapper {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            background: var(--surface-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--primary-color);
+            border: 4px solid white;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Hover Overlay */
+        .avatar-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .profile-avatar-wrapper:hover .avatar-overlay {
+            opacity: 1;
+        }
+
+        .overlay-btn {
+            color: white;
+            font-size: 0.8rem;
+            padding: 5px 10px;
+            margin: 2px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            background: transparent;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .overlay-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .overlay-btn.danger {
+            color: #fca5a5;
+            border-color: #fca5a5;
+        }
+
+        .overlay-btn.danger:hover {
+            background: rgba(220, 38, 38, 0.2);
+        }
+
+
+        .profile-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-info {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .info-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        /* Edit Mode Styles */
+        .edit-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .profile-card {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .profile-avatar-wrapper {
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <i class="ph-fill ph-tag-chevron"></i>
+                Cou-<span>pong</span>
+            </a>
+            <div class="nav-actions" id="nav-actions">
+                <a href="index.html" class="btn btn-secondary">Home</a>
+                <button onclick="auth.logout()" class="btn btn-primary">Log Out</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="profile-container animate-fade-in">
+        <div class="profile-card">
+
+            <!-- Avatar with Overlay -->
+            <div class="profile-avatar-wrapper">
+                <div class="profile-avatar" id="avatar-container">
+                    <i class="ph-fill ph-user"></i>
+                </div>
+
+                <!-- Hover Overlay Controls -->
+                <div class="avatar-overlay">
+                    <button class="overlay-btn" onclick="triggerPhotoUpload()">
+                        <i class="ph ph-camera"></i> Change
+                    </button>
+                    <button class="overlay-btn danger" onclick="removePhoto()" id="remove-photo-btn"
+                        style="display: none;">
+                        <i class="ph ph-trash"></i> Remove
+                    </button>
+                </div>
+
+                <!-- Hidden File Input -->
+                <input type="file" id="hidden-photo-input" hidden accept="image/png, image/jpeg, image/webp">
+            </div>
+
+            <div class="profile-content">
+                <div class="profile-header">
+                    <h1 id="display-name">Loading...</h1>
+                    <p style="color: var(--text-secondary);">Member since <span id="join-date">...</span></p>
+                </div>
+
+                <!-- Status Message -->
+                <div id="photo-status" style="margin-bottom: 1rem; font-size: 0.9rem; display: none;"></div>
+
+                <div class="profile-info" id="view-mode">
+                    <div class="info-group">
+                        <label>Email Address</label>
+                        <div class="info-value" id="display-email">...</div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button onclick="toggleEdit(true)" class="btn btn-secondary">Edit Profile</button>
+                    </div>
+                </div>
+
+                <form class="profile-info" id="edit-mode" style="display: none;" onsubmit="handleUpdate(event)">
+                    <div class="info-group">
+                        <label>Full Name</label>
+                        <input type="text" id="edit-name" class="edit-input" required>
+                    </div>
+
+                    <div class="info-group">
+                        <label>New Password (Optional, min 8 chars)</label>
+                        <input type="password" id="edit-password" class="edit-input"
+                            placeholder="Leave blank to keep current">
+                    </div>
+
+                    <div style="font-size: 0.9rem; color: #dc2626; display: none;" id="update-msg"></div>
+
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="button" onclick="toggleEdit(false)" class="btn btn-text">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = auth.getSession();
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            renderProfile(user);
+
+            // Setup File Input Listener
+            document.getElementById('hidden-photo-input').addEventListener('change', handlePhotoUpload);
+        });
+
+        function renderProfile(user) {
+            document.getElementById('display-name').textContent = user.name;
+            document.getElementById('display-email').textContent = user.email;
+
+            const date = new Date(user.createdAt).toLocaleDateString();
+            document.getElementById('join-date').textContent = date;
+
+            // Pre-fill edit
+            document.getElementById('edit-name').value = user.name;
+
+            // Render Avatar
+            const avContainer = document.getElementById('avatar-container');
+            const removeBtn = document.getElementById('remove-photo-btn');
+
+            if (user.photo) {
+                avContainer.innerHTML = `<img src="${user.photo}" alt="Profile">`;
+                removeBtn.style.display = 'inline-flex'; // Show remove option
+            } else {
+                avContainer.innerHTML = `<i class="ph-fill ph-user"></i>`;
+                removeBtn.style.display = 'none'; // Hide remove option
+            }
+
+            // Update Navbar Avatar
+            updateNavbarAvatar(user);
+        }
+
+        function updateNavbarAvatar(user) {
+            const navActions = document.getElementById('nav-actions');
+            if (navActions) {
+                const avatarHtml = user.photo
+                    ? `<img src="${user.photo}" alt="Profile">`
+                    : `<i class="ph-fill ph-user"></i>`;
+
+                navActions.innerHTML = `
+                    <a href="index.html" class="btn btn-secondary" style="margin-right: 1rem;">Home</a>
+                    <div class="profile-dropdown-container">
+                        <div class="profile-trigger" onclick="toggleProfileMenu(event)">
+                            ${avatarHtml}
+                            <span class="profile-trigger-name">${user.name.split(' ')[0]}</span>
+                            <i class="ph-fill ph-caret-down"></i>
+                        </div>
+                        
+                        <div class="profile-menu" id="nav-profile-menu">
+                            <div class="profile-menu-header">
+                                <strong>${user.name}</strong>
+                                <small>${user.email}</small>
+                            </div>
+                            <div class="profile-menu-body">
+                                <a href="profile.html" class="profile-menu-item">
+                                    <i class="ph-fill ph-user-circle"></i> My Profile
+                                </a>
+                                <div class="profile-menu-divider"></div>
+                                <button onclick="auth.logout()" class="profile-menu-item danger">
+                                    <i class="ph-fill ph-sign-out"></i> Log Out
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Copied dropdown logic for profile page specifically
+        window.toggleProfileMenu = function (e) {
+            e.stopPropagation();
+            const menu = document.getElementById('nav-profile-menu');
+            const trigger = e.currentTarget;
+            if (menu) {
+                const isActive = menu.classList.contains('active');
+                if (isActive) {
+                    menu.classList.remove('active');
+                    trigger.classList.remove('active');
+                } else {
+                    menu.classList.add('active');
+                    trigger.classList.add('active');
+                }
+            }
+        };
+
+        document.addEventListener('click', () => {
+            const menu = document.getElementById('nav-profile-menu');
+            if (menu) menu.classList.remove('active');
+            const trigger = document.querySelector('.profile-trigger');
+            if (trigger) trigger.classList.remove('active');
+        });
+
+        // --- Photo Logic ---
+
+        function triggerPhotoUpload() {
+            document.getElementById('hidden-photo-input').click();
+        }
+
+        async function handlePhotoUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const status = document.getElementById('photo-status');
+
+            // Validation
+            const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+            if (!validTypes.includes(file.type)) {
+                alert('Invalid file type. Only JPG, PNG, WEBP allowed.');
+                return;
+            }
+            if (file.size > 2 * 1024 * 1024) { // 2MB
+                alert('File too large. Max 2MB.');
+                return;
+            }
+
+            status.style.display = 'block';
+            status.style.color = 'var(--text-secondary)';
+            status.textContent = 'Updating profile picture...';
+
+            try {
+                // Convert to Base64
+                const base64 = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.readAsDataURL(file);
+                });
+
+                // Immediate Save
+                const updatedUser = await auth.updateProfile({ photo: base64 });
+                renderProfile(updatedUser);
+
+                status.style.color = '#16a34a'; // Green
+                status.textContent = 'Profile picture updated successfully!';
+                setTimeout(() => status.style.display = 'none', 3000);
+            } catch (err) {
+                status.style.color = '#dc2626';
+                status.textContent = 'Error: ' + err;
+            }
+
+            // Reset input
+            e.target.value = '';
+        }
+
+        async function removePhoto() {
+            if (!confirm('Are you sure you want to remove your profile picture?')) return;
+
+            try {
+                const updatedUser = await auth.updateProfile({ photo: null }); // Send null to remove
+                renderProfile(updatedUser);
+                alert('Profile picture removed.');
+            } catch (err) {
+                alert('Error removing photo: ' + err);
+            }
+        }
+
+        // --- General Edit Logic ---
+
+        function toggleEdit(isEditing) {
+            document.getElementById('view-mode').style.display = isEditing ? 'none' : 'grid';
+            document.getElementById('edit-mode').style.display = isEditing ? 'grid' : 'none';
+        }
+
+        async function handleUpdate(e) {
+            e.preventDefault();
+            const msg = document.getElementById('update-msg');
+            const name = document.getElementById('edit-name').value;
+            const password = document.getElementById('edit-password').value;
+
+            const updates = { name };
+            if (password) updates.password = password;
+
+            try {
+                const updatedUser = await auth.updateProfile(updates);
+                renderProfile(updatedUser);
+                toggleEdit(false);
+                alert('Profile details updated!');
+            } catch (err) {
+                msg.textContent = err;
+                msg.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+
+</html>

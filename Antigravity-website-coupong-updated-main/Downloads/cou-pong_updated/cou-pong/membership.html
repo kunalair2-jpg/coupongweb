@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cou-pong Plus Membership</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .membership-hero {
+            background: linear-gradient(135deg, #FFB30F 0%, #FF5A1F 100%);
+            color: white;
+            padding: 4rem 1.5rem;
+            text-align: center;
+            border-radius: 0 0 50% 50% / 40px;
+        }
+
+        .membership-hero h1 {
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .membership-hero p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .plans-container {
+            max-width: 1100px;
+            margin: -3rem auto 3rem;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .plan-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 2.5rem 2rem;
+            box-shadow: var(--shadow-premium);
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .plan-card.popular {
+            border: 2px solid #FFB30F;
+            transform: scale(1.05);
+        }
+
+        .plan-card.popular:hover {
+            transform: scale(1.05) translateY(-10px);
+        }
+
+        .popular-badge {
+            background: #FFB30F;
+            color: #fff;
+            padding: 0.5rem 2rem;
+            position: absolute;
+            top: 20px;
+            right: -35px;
+            transform: rotate(45deg);
+            font-weight: 700;
+            font-size: 0.8rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .plan-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin: 1.5rem 0 0.5rem;
+            font-family: var(--font-heading);
+        }
+
+        .plan-price span {
+            font-size: 1rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .plan-duration {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+        }
+
+        .benefits-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 2rem;
+            text-align: left;
+        }
+
+        .benefits-list li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .benefits-list li i {
+            color: var(--success-color);
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .features-section {
+            padding: 4rem 1.5rem;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-item {
+            padding: 1.5rem;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .feature-item h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .member-badge-demo {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #FFB30F, #FF5A1F);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        /* Modal for Payment Simulation */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .payment-modal {
+            background: white;
+            width: 90%;
+            max-width: 450px;
+            padding: 2rem;
+            border-radius: var(--radius-xl);
+            text-align: center;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo"><i class="ph-fill ph-tag-chevron"></i> Cou-<span>pong</span></a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Deals</a>
+                <a href="membership.html" class="nav-link active"
+                    style="color: var(--secondary-color); font-weight: 600;"> Membership</a>
+                <a href="extra-discounts.html" class="nav-link" style="color: #E91E63; font-weight: 600;"> Extra
+                    Discounts</a>
+                <div class="nav-actions" id="nav-actions-container">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="membership-hero">
+        <h1>Upgrade to Cou-pong <span style="font-style: italic;">Plus</span></h1>
+        <p>Unlock exclusive deals, double rewards, and premium support. Join the club of smart savers.</p>
+    </header>
+
+    <div class="plans-container">
+        <!-- Monthly Plan -->
+        <div class="plan-card">
+            <h3>Monthly Saver</h3>
+            <div class="plan-price">₹49<span>/mo</span></div>
+            <div class="plan-duration">Billed Monthly</div>
+            <ul class="benefits-list">
+                <li><i class="ph-fill ph-check-circle"></i> 10% Extra Cashback</li>
+                <li><i class="ph-fill ph-check-circle"></i> Access all Exclusive Deals</li>
+                <li><i class="ph-fill ph-check-circle"></i> Priority Support</li>
+                <li><i class="ph-fill ph-x-circle" style="color: var(--text-light);"></i> No Annual Bonus</li>
+            </ul>
+            <button class="btn btn-secondary btn-full" onclick="initiatePurchase('monthly', 49)">Choose Monthly</button>
+        </div>
+
+        <!-- Annual Plan -->
+        <div class="plan-card popular">
+            <div class="popular-badge">BEST VALUE</div>
+            <h3>Annual Pro</h3>
+            <div class="plan-price">₹299<span>/yr</span></div>
+            <div class="plan-duration">Less than ₹25/mo</div>
+            <ul class="benefits-list">
+                <li><i class="ph-fill ph-check-circle"></i> 10% Extra Cashback</li>
+                <li><i class="ph-fill ph-check-circle"></i> Access all Exclusive Deals</li>
+                <li><i class="ph-fill ph-check-circle"></i> Priority Support</li>
+                <li><i class="ph-fill ph-check-circle"></i> 500 Bonus Points</li>
+            </ul>
+            <button class="btn btn-primary btn-full" onclick="initiatePurchase('annual', 299)">Choose Annual</button>
+        </div>
+
+        <!-- Quarterly Plan -->
+        <div class="plan-card">
+            <h3>Quarterly</h3>
+            <div class="plan-price">₹129<span>/3mo</span></div>
+            <div class="plan-duration">Billed Quarterly</div>
+            <ul class="benefits-list">
+                <li><i class="ph-fill ph-check-circle"></i> 10% Extra Cashback</li>
+                <li><i class="ph-fill ph-check-circle"></i> Access all Exclusive Deals</li>
+                <li><i class="ph-fill ph-check-circle"></i> Priority Support</li>
+                <li><i class="ph-fill ph-check-circle"></i> 100 Bonus Points</li>
+            </ul>
+            <button class="btn btn-secondary btn-full" onclick="initiatePurchase('quarterly', 129)">Choose
+                Quarterly</button>
+        </div>
+    </div>
+
+    <section class="features-section">
+        <h2 class="section-title">Why Join Cou-pong Plus?</h2>
+        <div class="feature-grid">
+            <div class="feature-item">
+                <i class="ph-fill ph-crown feature-icon"></i>
+                <h3>Exclusive Access</h3>
+                <p>Unlock members-only deals that are not available to free users. High value, limited time offers.</p>
+            </div>
+            <div class="feature-item">
+                <i class="ph-fill ph-coin-vertical feature-icon"></i>
+                <h3>10% Cashback</h3>
+                <p>Double your savings! Regular users get 5%, Plus members get 10% cashback on every redemption.</p>
+            </div>
+            <div class="feature-item">
+                <i class="ph-fill ph-lightning feature-icon"></i>
+                <h3>Member Badge</h3>
+                <p>Stand out with a premium <span class="member-badge-demo"><i class="ph-fill ph-crown"></i> PLUS</span>
+                    badge on your profile.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Payment Simulation Modal -->
+    <div class="modal-overlay" id="payment-modal">
+        <div class="payment-modal">
+            <div id="payment-step-1">
+                <h2 style="margin-bottom: 1rem;">Secure Checkout</h2>
+                <div
+                    style="background: var(--surface-color); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.5rem; text-align: left;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>Plan</span>
+                        <span style="font-weight: 600;" id="checkout-plan-name">Annual Pro</span>
+                    </div>
+                    <div
+                        style="display: flex; justify-content: space-between; font-size: 1.25rem; color: var(--primary-color); font-weight: 700;">
+                        <span>Total</span>
+                        <span id="checkout-price">₹299</span>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-full" onclick="processPayment()">Confirm & Pay</button>
+                <button class="btn btn-text" onclick="closeModal()" style="margin-top: 1rem;">Cancel</button>
+            </div>
+
+            <div id="payment-step-processing" style="display: none;">
+                <div class="spinner"></div>
+                <h3>Processing Payment...</h3>
+                <p>Please wait while we activate your membership.</p>
+            </div>
+
+            <div id="payment-step-success" style="display: none;">
+                <div style="font-size: 4rem; color: var(--success-color); margin-bottom: 1rem;"><i
+                        class="ph-fill ph-check-circle"></i></div>
+                <h3>Welcome to Plus!</h3>
+                <p>Your membership is now active.</p>
+                <div style="margin-top: 1.5rem;">
+                    <button class="btn btn-primary btn-full" onclick="window.location.href='my-dashboard.html'">Go to
+                        Dashboard</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/nav-update.js"></script>
+    <script>
+        let selectedPlan = null;
+        let selectedPrice = 0;
+
+        function initiatePurchase(plan, price) {
+            const user = auth.getSession();
+            if (!user) {
+                // Save intent
+                sessionStorage.setItem('pending_plan', plan);
+                window.location.href = 'login.html?redirect=membership.html';
+                return;
+            }
+
+            selectedPlan = plan;
+            selectedPrice = price;
+
+            // Map plan ID to display name
+            const planNames = {
+                'monthly': 'Monthly Saver',
+                'quarterly': 'Quarterly Plan',
+                'annual': 'Annual Pro'
+            };
+
+            document.getElementById('checkout-plan-name').textContent = planNames[plan];
+            document.getElementById('checkout-price').textContent = '₹' + price;
+
+            document.getElementById('payment-modal').style.display = 'flex';
+            document.getElementById('payment-step-1').style.display = 'block';
+            document.getElementById('payment-step-processing').style.display = 'none';
+            document.getElementById('payment-step-success').style.display = 'none';
+        }
+
+        function closeModal() {
+            document.getElementById('payment-modal').style.display = 'none';
+        }
+
+        async function processPayment() {
+            document.getElementById('payment-step-1').style.display = 'none';
+            document.getElementById('payment-step-processing').style.display = 'block';
+
+            // Simulate API latency
+            await new Promise(r => setTimeout(r, 2000));
+
+            try {
+                // Call auth system to upgrade user
+                await auth.purchaseMembership(selectedPlan, selectedPrice);
+
+                document.getElementById('payment-step-processing').style.display = 'none';
+                document.getElementById('payment-step-success').style.display = 'block';
+
+                // Confetti or visual flair could go here
+            } catch (error) {
+                alert('Payment failed: ' + error);
+                closeModal();
+            }
+        }
+
+        // Check for pending purchase after login
+        document.addEventListener('DOMContentLoaded', () => {
+            const pending = sessionStorage.getItem('pending_plan');
+            if (pending) {
+                sessionStorage.removeItem('pending_plan');
+                // Trigger appropriate button click simply
+                // For simplicity, just scroll to plans
+                window.scrollTo({ top: 300, behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+
+</html>

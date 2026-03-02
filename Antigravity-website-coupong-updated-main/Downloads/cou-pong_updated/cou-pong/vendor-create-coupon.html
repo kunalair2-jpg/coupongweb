@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Coupon | Cou-pong Business</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        :root {
+            --business-primary: #4F46E5;
+            --business-primary-hover: #4338ca;
+            --step-inactive: #E5E7EB;
+            --step-active: var(--business-primary);
+            --step-completed: #10B981;
+        }
+
+        .sidebar-link.active {
+            background: #EEF2FF;
+            color: var(--business-primary);
+        }
+
+        /* Wizard Styles */
+        .wizard-container {
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            < !-- min-height: 80vh;
+            -->
+        }
+
+        .wizard-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            background: #FAFAFA;
+        }
+
+        .steps-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            position: relative;
+        }
+
+        .steps-indicator::before {
+            content: '';
+            position: absolute;
+            top: 14px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--step-inactive);
+            z-index: 0;
+        }
+
+        .step-item {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            width: 80px;
+        }
+
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid var(--step-inactive);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .step-item.active .step-circle {
+            border-color: var(--step-active);
+            background: var(--step-active);
+            color: white;
+            box-shadow: 0 0 0 4px #EEF2FF;
+        }
+
+        .step-item.completed .step-circle {
+            border-color: var(--step-completed);
+            background: var(--step-completed);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .step-item.active .step-label {
+            color: var(--business-primary);
+            font-weight: 700;
+        }
+
+        .wizard-content {
+            padding: 2rem;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .step-panel {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .step-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .wizard-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--border-color);
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Custom Form Elements */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .rich-text-editor {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            min-height: 150px;
+        }
+
+        .rte-toolbar {
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.5rem;
+            background: #f9f9f9;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .rte-btn {
+            background: none;
+            border: 1px solid transparent;
+            padding: 4px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .rte-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .image-upload-area {
+            border: 2px dashed var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            border-radius: var(--radius-md);
+            background: #FAFAFA;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .image-upload-area:hover {
+            border-color: var(--business-primary);
+            background: #EEF2FF;
+        }
+
+        .tag-input-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+        }
+
+        .tag-chip {
+            background: #EEF2FF;
+            color: var(--business-primary);
+            padding: 2px 8px;
+            border-radius: 99px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tag-chip i {
+            cursor: pointer;
+        }
+
+        .preview-card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            max-width: 350px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="vendor-dashboard.html" class="logo">
+                <i class="ph-fill ph-tag-chevron" style="color: var(--business-primary);"></i>
+                Cou-<span>pong</span>
+                <span
+                    style="font-size: 0.8rem; background: #EEF2FF; padding: 2px 8px; border-radius: 4px; margin-left: 10px; color: var(--business-primary); font-weight: 600;">Partner</span>
+            </a>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="text-align: right;">
+                    <div style="font-weight: 600;" id="vendor-name-display">Loading...</div>
+                </div>
+                <div style="width: 40px; height: 40px; background: #E0E7FF; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--business-primary); font-weight: bold;"
+                    id="vendor-initials">B</div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <nav class="sidebar-menu">
+                <a href="vendor-dashboard.html" class="sidebar-link"><i class="ph-bold ph-squares-four"></i>
+                    Dashboard</a>
+                <a href="vendor-create-coupon.html" class="sidebar-link active"><i class="ph-bold ph-plus-circle"></i>
+                    Create Coupon</a>
+                <a href="vendor-coupons.html" class="sidebar-link"><i class="ph-bold ph-tag"></i> Coupons</a>
+                <a href="vendor-analytics.html" class="sidebar-link"><i class="ph-bold ph-chart-line-up"></i>
+                    Analytics</a>
+                <a href="vendor-profile.html" class="sidebar-link"><i class="ph-bold ph-storefront"></i> Store
+                    Profile</a>
+                <a href="#" class="sidebar-link" onclick="auth.logout()"
+                    style="margin-top: auto; color: var(--danger-color);"><i class="ph-bold ph-sign-out"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <main class="dashboard-content">
+
+            <div class="wizard-container">
+                <!-- Header with Steps -->
+                <div class="wizard-header">
+                    <h2 style="margin-bottom: 0.5rem; font-size: 1.5rem;">Create New Coupon</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">Follow the steps to publish your deal.
+                    </p>
+
+                    <div class="steps-indicator">
+                        <div class="step-item active" data-step="1">
+                            <div class="step-circle">1</div>
+                            <div class="step-label">Basic</div>
+                        </div>
+                        <div class="step-item" data-step="2">
+                            <div class="step-circle">2</div>
+                            <div class="step-label">Discount</div>
+                        </div>
+                        <div class="step-item" data-step="3">
+                            <div class="step-circle">3</div>
+                            <div class="step-label">Schedule</div>
+                        </div>
+                        <div class="step-item" data-step="4">
+                            <div class="step-circle">4</div>
+                            <div class="step-label">Target</div>
+                        </div>
+                        <div class="step-item" data-step="5">
+                            <div class="step-circle">5</div>
+                            <div class="step-label">Preview</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Content -->
+                <form id="coupon-wizard-form" class="wizard-content">
+
+                    <!-- Step 1: Basic Details -->
+                    <div class="step-panel active" id="panel-1">
+                        <h3 class="mb-4">Basic Details</h3>
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label class="form-label">Coupon Title <span
+                                        style="font-weight: 400; color: var(--text-secondary); font-size: 0.8rem; float: right;">0/100</span></label>
+                                <input type="text" class="form-input" id="title"
+                                    placeholder="e.g. 50% Off Summer Special Pizza" maxlength="100" required>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label class="form-label">Short Description</label>
+                                <textarea class="form-input" id="shortDesc" rows="2"
+                                    placeholder="Brief hook text..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Category</label>
+                                <select class="form-input" id="category">
+                                    <option value="food_drink">Food & Drink</option>
+                                    <option value="health_fitness">Health & Fitness</option>
+                                    <option value="beauty_wellness">Beauty & Wellness</option>
+                                    <option value="family">Family</option>
+                                    <option value="retail">Retail</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Subcategory</label>
+                                <select class="form-input" id="subcategory">
+                                    <option value="pizza">Pizza</option>
+                                    <option value="fine_dining">Fine Dining</option>
+                                    <option value="fast_food">Fast Food</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label class="form-label">Long Description (Rich Text)</label>
+                                <div class="rich-text-editor">
+                                    <div class="rte-toolbar">
+                                        <button type="button" class="rte-btn"><i class="ph-bold ph-text-b"></i></button>
+                                        <button type="button" class="rte-btn"><i
+                                                class="ph-bold ph-text-italic"></i></button>
+                                        <button type="button" class="rte-btn"><i
+                                                class="ph-bold ph-list-bullets"></i></button>
+                                    </div>
+                                    <div id="longDesc" contenteditable="true"
+                                        style="padding: 1rem; min-height: 100px; outline: none;">
+                                        Describe your offer in detail here...
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label class="form-label">Images (Max 5)</label>
+                                <div class="image-upload-area" onclick="document.getElementById('img-upload').click()">
+                                    <i class="ph ph-images" style="font-size: 2rem; color: var(--text-secondary);"></i>
+                                    <p style="margin-top: 0.5rem; color: var(--text-secondary);">Click to upload or drag
+                                        & drop</p>
+                                    <input type="file" id="img-upload" multiple style="display: none;">
+                                </div>
+                                <div id="preview-gallery" style="display: flex; gap: 10px; margin-top: 1rem;">
+                                    <!-- Demo Image -->
+                                    <div
+                                        style="width: 80px; height: 80px; border-radius: 8px; background: #eee; overflow: hidden; position: relative;">
+                                        <img src="https://source.unsplash.com/random/200x200/?food"
+                                            style="width:100%; height:100%; object-fit: cover;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Discount Settings -->
+                    <div class="step-panel" id="panel-2">
+                        <h3 class="mb-4">Discount Rules</h3>
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label class="form-label">Discount Type</label>
+                                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                    <label
+                                        style="background: #f3f4f6; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; border: 1px solid var(--border-color);">
+                                        <input type="radio" name="dType" value="percentage" checked> Percentage (%)
+                                    </label>
+                                    <label
+                                        style="background: #f3f4f6; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; border: 1px solid var(--border-color);">
+                                        <input type="radio" name="dType" value="flat"> Flat Amount ($)
+                                    </label>
+                                    <label
+                                        style="background: #f3f4f6; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; border: 1px solid var(--border-color);">
+                                        <input type="radio" name="dType" value="b1g1"> Buy X Get Y
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Discount Value</label>
+                                <input type="number" class="form-input" id="value" placeholder="10">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Number of Tickets (Inventory)</label>
+                                <input type="number" class="form-input" id="quantity" placeholder="1000">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Min Purchase ($)</label>
+                                <input type="number" class="form-input" id="minSpend" placeholder="0">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Max Discount Cap ($)</label>
+                                <input type="number" class="form-input" id="maxCap" placeholder="No limit">
+                            </div>
+
+                            <div class="form-group full-width"
+                                style="background: #FFFBEB; padding: 1rem; border-radius: 8px; border: 1px solid #FCD34D;">
+                                <label class="form-label" style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="firstTime"> First-Time Customers Only
+                                </label>
+                                <p style="font-size: 0.85rem; color: #92400E; margin-top: 5px;">This will restrict the
+                                    coupon to users who have never purchased from your store before.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Scheduling -->
+                    <div class="step-panel" id="panel-3">
+                        <h3 class="mb-4">Availability & Schedule</h3>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Start Date</label>
+                                <input type="date" class="form-input" id="startDate">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">End Date</label>
+                                <input type="date" class="form-input" id="endDate">
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label class="form-label">Active Days</label>
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                    <label class="day-check"><input type="checkbox" checked> M</label>
+                                    <label class="day-check"><input type="checkbox" checked> T</label>
+                                    <label class="day-check"><input type="checkbox" checked> W</label>
+                                    <label class="day-check"><input type="checkbox" checked> T</label>
+                                    <label class="day-check"><input type="checkbox" checked> F</label>
+                                    <label class="day-check"><input type="checkbox" checked> S</label>
+                                    <label class="day-check"><input type="checkbox" checked> S</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Time Start (Happy Hour)</label>
+                                <input type="time" class="form-input" id="timeStart">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Time End</label>
+                                <input type="time" class="form-input" id="timeEnd">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Targeting -->
+                    <div class="step-panel" id="panel-4">
+                        <h3 class="mb-4">Targeting & Audience</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">City</label>
+                                <input type="text" class="form-input" id="city" placeholder="e.g. Pune">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Locality / Area</label>
+                                <input type="text" class="form-input" id="locality" placeholder="e.g. Koregaon Park">
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label class="form-label">User Segmentation</label>
+                                <select class="form-input" multiple style="height: 100px;">
+                                    <option value="all" selected>All Users</option>
+                                    <option value="new">New Users</option>
+                                    <option value="returning">Returning Users (2+ Orders)</option>
+                                    <option value="vip">VIP Members (Gold/Platinum)</option>
+                                </select>
+                                <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px;">Hold
+                                    Ctrl/Cmd to select multiple.</p>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label class="form-label">Terms & Conditions</label>
+                                <textarea class="form-input" id="terms" rows="3"
+                                    placeholder="- Valid only for dine-in&#10;- Cannot be clubbed with other offers"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Preview -->
+                    <div class="step-panel" id="panel-5">
+                        <div style="text-align: center; margin-bottom: 2rem;">
+                            <h3 class="mb-4">Review & Publish</h3>
+                            <p>Check how your coupon will look to customers.</p>
+                        </div>
+
+                        <div style="background: #F3F4F6; padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+                            <!-- Preview Card Component -->
+                            <div class="preview-card" style="background: white;">
+                                <div style="height: 200px; background: #eee; position: relative;">
+                                    <img src="https://source.unsplash.com/random/400x300/?food"
+                                        style="width: 100%; height: 100%; object-fit: cover;" id="prev-img">
+                                    <span
+                                        style="position: absolute; top: 10px; right: 10px; background: white; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+                                        id="prev-dist">10 KM</span>
+                                </div>
+                                <div style="padding: 1rem;">
+                                    <div
+                                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                                        <h3 style="font-size: 1.1rem; font-weight: 700;" id="prev-title">Pizza Offer
+                                        </h3>
+                                        <span
+                                            style="background: #EEF2FF; color: var(--business-primary); padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.8rem;"
+                                            id="prev-type">20% OFF</span>
+                                    </div>
+                                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;"
+                                        id="prev-desc">Delicious cheese pizza for summer...</p>
+
+                                    <div style="display: flex; gap: 10px; margin-bottom: 1rem;">
+                                        <span class="tag-chip">🍕 Food</span>
+                                        <span class="tag-chip">📍 Pune</span>
+                                    </div>
+
+                                    <button type="button" class="btn btn-primary" style="width: 100%;">Redeem
+                                        Now</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            style="background: #ECFDF5; padding: 1rem; border-radius: 8px; display: flex; align-items: center; gap: 1rem; color: #065F46;">
+                            <i class="ph-fill ph-check-circle" style="font-size: 1.5rem;"></i>
+                            <div>
+                                <div style="font-weight: 700;">Ready to Launch</div>
+                                <div style="font-size: 0.9rem;">Estimated Reach: ~12,500 Users in your area.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+
+                <!-- Footer Navigation -->
+                <div class="wizard-footer">
+                    <button type="button" class="btn btn-text" id="btn-back" disabled>Back</button>
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="button" class="btn btn-text" style="color: var(--text-secondary);">Save
+                            Draft</button>
+                        <button type="button" class="btn btn-primary" id="btn-next">Next Step</button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/vendor-sim.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Auth Check
+            const session = auth.getSession();
+            if (!session || session.type !== 'vendor') { window.location.href = 'vendor-login.html'; return; }
+            document.getElementById('vendor-name-display').textContent = session.businessName || 'Business';
+            document.getElementById('vendor-initials').textContent = (session.businessName || 'B').charAt(0).toUpperCase();
+
+            // Wizard Logic
+            let currentStep = 1;
+            const totalSteps = 5;
+
+            const btnNext = document.getElementById('btn-next');
+            const btnBack = document.getElementById('btn-back');
+            const wizardForm = document.getElementById('coupon-wizard-form');
+
+            function updateUI() {
+                // Update Progress Header
+                document.querySelectorAll('.step-item').forEach(item => {
+                    const step = parseInt(item.dataset.step);
+                    item.classList.remove('active', 'completed');
+                    if (step === currentStep) item.classList.add('active');
+                    if (step < currentStep) item.classList.add('completed');
+                });
+
+                // Show Content
+                document.querySelectorAll('.step-panel').forEach(panel => panel.classList.remove('active'));
+                document.getElementById(`panel-${currentStep}`).classList.add('active');
+
+                // Buttons
+                btnBack.disabled = currentStep === 1;
+                btnNext.textContent = currentStep === totalSteps ? 'Publish Coupon' : 'Next Step';
+
+                // Update Preview if on Step 5
+                if (currentStep === 5) updatePreview();
+            }
+
+            function updatePreview() {
+                // Grab values
+                const title = document.getElementById('title').value || 'Coupon Title';
+                const desc = document.getElementById('shortDesc').value || 'Short description will appear here...';
+                const type = document.querySelector('input[name="dType"]:checked').value;
+                const value = document.getElementById('value').value || '0';
+
+                // Set values
+                document.getElementById('prev-title').textContent = title;
+                document.getElementById('prev-desc').textContent = desc;
+
+                let badgeText = '';
+                if (type === 'percentage') badgeText = `${value}% OFF`;
+                else if (type === 'flat') badgeText = `$${value} OFF`;
+                else badgeText = 'B1G1 FREE';
+
+                document.getElementById('prev-type').textContent = badgeText;
+            }
+
+            btnNext.addEventListener('click', async () => {
+                if (currentStep < totalSteps) {
+                    // Validation (basic)
+                    const currentPanel = document.getElementById(`panel-${currentStep}`);
+                    const inputs = currentPanel.querySelectorAll('input[required], select[required]');
+                    let valid = true;
+                    inputs.forEach(input => {
+                        if (!input.value) {
+                            input.style.borderColor = 'red';
+                            valid = false;
+                        } else {
+                            input.style.borderColor = 'var(--border-color)';
+                        }
+                    });
+
+                    if (!valid) return alert('Please fill in all required fields.');
+
+                    currentStep++;
+                    updateUI();
+                } else {
+                    // Submit
+                    btnNext.disabled = true;
+                    btnNext.textContent = 'Publishing...';
+
+                    // Gather Data
+                    const formData = {
+                        title: document.getElementById('title').value,
+                        shortDesc: document.getElementById('shortDesc').value,
+                        type: document.querySelector('input[name="dType"]:checked').value,
+                        value: document.getElementById('value').value,
+                        quantity: document.getElementById('quantity').value,
+                        city: document.getElementById('city').value,
+                        locality: document.getElementById('locality').value,
+                        startDate: document.getElementById('startDate').value,
+                        endDate: document.getElementById('endDate').value,
+                        vendorEmail: session.email,
+                        status: 'active'
+                    };
+
+                    // Simulate API Call
+                    try {
+                        // In a real app, fetch('/api/coupons', ...)
+                        console.log('Submitting:', formData);
+
+                        // Use Sim
+                        setTimeout(() => {
+                            VendorSim.addCoupon(session.email, formData);
+                            alert('Coupon Published Successfully! 🎉');
+                            window.location.href = 'vendor-dashboard.html';
+                        }, 1500);
+
+                    } catch (e) {
+                        alert('Error publishing coupon');
+                        btnNext.disabled = false;
+                    }
+                }
+            });
+
+            btnBack.addEventListener('click', () => {
+                if (currentStep > 1) {
+                    currentStep--;
+                    updateUI();
+                }
+            });
+
+            // Allow clicking steps
+            document.querySelectorAll('.step-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const step = parseInt(item.dataset.step);
+                    if (step < currentStep) {
+                        currentStep = step;
+                        updateUI();
+                    }
+                });
+            });
+
+            updateUI();
+        });
+    </script>
+</body>
+
+</html>

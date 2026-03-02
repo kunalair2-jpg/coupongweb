@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Cou-pong Business</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <i class="ph-fill ph-tag-chevron"></i>
+                Cou-<span>pong</span>
+                <span
+                    style="font-size: 0.8rem; background: var(--surface-color); padding: 2px 8px; border-radius: 4px; margin-left: 10px; color: var(--text-secondary);">Business</span>
+            </a>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="text-align: right;">
+                    <div style="font-weight: 600;">Bella Italia</div>
+                    <div style="font-size: 0.8rem; color: var(--success-color);">Verified Partner</div>
+                </div>
+                <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
+                    style="width: 40px; height: 40px; border-radius: 50%;">
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <nav class="sidebar-menu">
+                <a href="#" class="sidebar-link active"><i class="ph-bold ph-squares-four"></i> Dashboard</a>
+                <a href="#" class="sidebar-link"><i class="ph-bold ph-tag"></i> My Deals</a>
+                <a href="#" class="sidebar-link"><i class="ph-bold ph-chart-line-up"></i> Analytics</a>
+                <a href="#" class="sidebar-link"><i class="ph-bold ph-qr-code"></i> Redeem Code</a>
+                <a href="#" class="sidebar-link"><i class="ph-bold ph-storefront"></i> Store Settings</a>
+                <a href="index.html" class="sidebar-link" style="margin-top: auto; color: var(--danger-color);"><i
+                        class="ph-bold ph-sign-out"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <main class="dashboard-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1 style="font-size: 1.8rem;">Overview</h1>
+                <button class="btn btn-primary" onclick="alert('Create Deal feature coming in V2!')"><i
+                        class="ph-bold ph-plus"></i> Create New Deal</button>
+            </div>
+
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Total Revenue</span>
+                    <span class="stat-value">$12,450</span>
+                    <span style="color: var(--success-color); font-size: 0.85rem;">+12% from last month</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Coupons Sold</span>
+                    <span class="stat-value">1,240</span>
+                    <span style="color: var(--success-color); font-size: 0.85rem;">+5% from last month</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Redemption Rate</span>
+                    <span class="stat-value">68%</span>
+                    <span style="color: var(--text-secondary); font-size: 0.85rem;">Average is 60%</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Active Deals</span>
+                    <span class="stat-value">3</span>
+                </div>
+            </div>
+
+            <h2 class="section-title" style="font-size: 1.5rem; border: none;">Active Deals</h2>
+
+            <div
+                style="background: white; border-radius: var(--radius-lg); border: 1px solid var(--border-color); overflow: hidden;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead>
+                        <tr style="background: var(--surface-color); border-bottom: 1px solid var(--border-color);">
+                            <th style="padding: 1rem;">Deal Name</th>
+                            <th style="padding: 1rem;">Price</th>
+                            <th style="padding: 1rem;">Sold</th>
+                            <th style="padding: 1rem;">Status</th>
+                            <th style="padding: 1rem;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 1rem;">
+                                <div style="font-weight: 500;">Authentic 3-Course Italian Dinner</div>
+                                <div style="font-size: 0.85rem; color: var(--text-light);">Expires in 3 days</div>
+                            </td>
+                            <td style="padding: 1rem;">$49.99</td>
+                            <td style="padding: 1rem;">125</td>
+                            <td style="padding: 1rem;"><span
+                                    style="background: #ECFDF5; color: var(--success-color); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;">Active</span>
+                            </td>
+                            <td style="padding: 1rem;">
+                                <button class="btn-text" style="color: var(--primary-color);">Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 1rem;">
+                                <div style="font-weight: 500;">Lunch Special: Pizza + Drink</div>
+                                <div style="font-size: 0.85rem; color: var(--text-light);">Expires in 2 days</div>
+                            </td>
+                            <td style="padding: 1rem;">$9.99</td>
+                            <td style="padding: 1rem;">50</td>
+                            <td style="padding: 1rem;"><span
+                                    style="background: #ECFDF5; color: var(--success-color); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;">Active</span>
+                            </td>
+                            <td style="padding: 1rem;">
+                                <button class="btn-text" style="color: var(--primary-color);">Edit</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+</body>
+
+</html>

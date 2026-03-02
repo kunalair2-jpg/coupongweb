@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Profile | Cou-pong Business</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        :root {
+            --business-primary: #4F46E5;
+        }
+
+        .sidebar-link.active {
+            background: #EEF2FF;
+            color: var(--business-primary);
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="vendor-dashboard.html" class="logo">
+                <i class="ph-fill ph-tag-chevron" style="color: var(--business-primary);"></i>
+                Cou-<span>pong</span>
+                <span
+                    style="font-size: 0.8rem; background: #EEF2FF; padding: 2px 8px; border-radius: 4px; margin-left: 10px; color: var(--business-primary); font-weight: 600;">Partner</span>
+            </a>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="text-align: right;">
+                    <div style="font-weight: 600;" id="vendor-name-display">Loading...</div>
+                </div>
+                <div style="width: 40px; height: 40px; background: #E0E7FF; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--business-primary); font-weight: bold;"
+                    id="vendor-initials">B</div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <nav class="sidebar-menu">
+                <a href="vendor-dashboard.html" class="sidebar-link"><i class="ph-bold ph-squares-four"></i>
+                    Dashboard</a>
+                <a href="vendor-create-coupon.html" class="sidebar-link"><i class="ph-bold ph-plus-circle"></i> Create
+                    Coupon</a>
+                <a href="vendor-coupons.html" class="sidebar-link"><i class="ph-bold ph-tag"></i> Coupons</a>
+                <a href="vendor-analytics.html" class="sidebar-link"><i class="ph-bold ph-chart-line-up"></i>
+                    Analytics</a>
+                <a href="vendor-profile.html" class="sidebar-link active"><i class="ph-bold ph-storefront"></i> Store
+                    Profile</a>
+                <a href="#" class="sidebar-link" onclick="auth.logout()"
+                    style="margin-top: auto; color: var(--danger-color);"><i class="ph-bold ph-sign-out"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <main class="dashboard-content">
+            <h1 style="font-size: 1.8rem; margin-bottom: 2rem;">Store Profile</h1>
+
+            <form id="profile-form"
+                style="background: white; padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color); max-width: 600px;">
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label class="form-label" style="display:block; margin-bottom: 0.5rem; font-weight: 500;">Business
+                        Name</label>
+                    <input type="text" class="form-input" id="businessName"
+                        style="width: 100%; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);"
+                        required>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label class="form-label" style="display:block; margin-bottom: 0.5rem; font-weight: 500;">Owner
+                        Name</label>
+                    <input type="text" class="form-input" id="ownerName"
+                        style="width: 100%; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);"
+                        required>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label class="form-label"
+                        style="display:block; margin-bottom: 0.5rem; font-weight: 500;">Email</label>
+                    <input type="email" class="form-input" id="email"
+                        style="width: 100%; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);"
+                        disabled>
+                </div>
+
+                <button type="submit" class="btn btn-primary"
+                    style="background: var(--business-primary); color: white; border: none; padding: 1rem 2rem; border-radius: var(--radius-md); font-weight: 600; cursor: pointer;">Save
+                    Changes</button>
+            </form>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const session = auth.getSession();
+            if (!session || session.type !== 'vendor') { window.location.href = 'vendor-login.html'; return; }
+
+            document.getElementById('vendor-name-display').textContent = session.businessName || 'Business';
+            document.getElementById('vendor-initials').textContent = (session.businessName || 'B').charAt(0).toUpperCase();
+
+            // Load values
+            document.getElementById('businessName').value = session.businessName || '';
+            document.getElementById('ownerName').value = session.ownerName || '';
+            document.getElementById('email').value = session.email || '';
+
+            // Handle Save
+            document.getElementById('profile-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newName = document.getElementById('businessName').value;
+                const newOwner = document.getElementById('ownerName').value;
+
+                // Update Session (Simulated persistence)
+                const newSession = { ...session, businessName: newName, ownerName: newOwner };
+                localStorage.setItem('coupong_session', JSON.stringify(newSession));
+
+                alert('Profile updated successfully!');
+                location.reload();
+            });
+        });
+    </script>
+</body>
+
+</html>

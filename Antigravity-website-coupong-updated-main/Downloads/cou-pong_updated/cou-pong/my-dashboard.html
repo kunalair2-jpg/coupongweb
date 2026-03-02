@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard | Cou-pong</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dropdown.css">
+    <style>
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .dashboard-sidebar {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+            border: 1px solid var(--border-color);
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            background: var(--surface-color);
+            color: var(--primary-color);
+        }
+
+        .sidebar-link i {
+            font-size: 1.2rem;
+        }
+
+        .dashboard-content {
+            min-height: 500px;
+        }
+
+        .dashboard-section {
+            display: none;
+        }
+
+        .dashboard-section.active {
+            display: block;
+        }
+
+        .wallet-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .wallet-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .wallet-card.cashback {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .wallet-card.points {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .wallet-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .wallet-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .coupon-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .coupon-code {
+            background: var(--surface-color);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            font-family: monospace;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            border: 2px dashed var(--primary-color);
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge.active {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .badge.used {
+            background: #e0e7ff;
+            color: #4f46e5;
+        }
+
+        .badge.premium {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #1F2937;
+        }
+
+        .referral-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            text-align: center;
+        }
+
+        .referral-code-display {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin: 1rem 0;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item {
+            background: white;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--primary-color);
+            margin-bottom: 0.75rem;
+        }
+
+        .notification-item.success {
+            border-left-color: var(--success-color);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-light);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-sidebar {
+                position: static;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <i class="ph-fill ph-tag-chevron"></i>
+                Cou-<span>pong</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Deals</a>
+                <a href="my-dashboard.html" class="nav-link active">Dashboard</a>
+                <div class="nav-actions" id="nav-actions">
+                    <a href="index.html" class="btn btn-secondary">Home</a>
+                    <button onclick="auth.logout()" class="btn btn-primary">Log Out</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <div>
+                <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">My Dashboard</h1>
+                <p style="color: var(--text-secondary);">Welcome back, <span id="user-name">User</span>!</p>
+            </div>
+            <div id="membership-badge"></div>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Sidebar Navigation -->
+            <aside class="dashboard-sidebar">
+                <nav class="sidebar-nav">
+                    <div class="sidebar-link active" data-section="overview">
+                        <i class="ph-fill ph-house"></i>
+                        <span>Overview</span>
+                    </div>
+                    <div class="sidebar-link" data-section="wallet">
+                        <i class="ph-fill ph-wallet"></i>
+                        <span>Wallet</span>
+                    </div>
+                    <div class="sidebar-link" data-section="coupons">
+                        <i class="ph-fill ph-ticket"></i>
+                        <span>My Coupons</span>
+                    </div>
+                    <div class="sidebar-link" data-section="saved">
+                        <i class="ph-fill ph-heart"></i>
+                        <span>Saved Deals</span>
+                    </div>
+                    <div class="sidebar-link" data-section="referrals">
+                        <i class="ph-fill ph-users-three"></i>
+                        <span>Refer & Earn</span>
+                    </div>
+                    <div class="sidebar-link" data-section="notifications">
+                        <i class="ph-fill ph-bell"></i>
+                        <span>Notifications</span>
+                        <span id="notif-badge" class="badge" style="margin-left: auto; display: none;"></span>
+                    </div>
+                    <div class="sidebar-link" data-section="profile">
+                        <i class="ph-fill ph-user-circle"></i>
+                        <span>Profile</span>
+                    </div>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="dashboard-content">
+                <!-- Overview Section -->
+                <section id="overview" class="dashboard-section active">
+                    <h2 style="margin-bottom: 1.5rem;">Wallet Overview</h2>
+                    <div class="wallet-cards">
+                        <div class="wallet-card cashback">
+                            <div class="wallet-label">Cashback Balance</div>
+                            <div class="wallet-value">₹<span id="overview-cashback">0</span></div>
+                        </div>
+                        <div class="wallet-card points">
+                            <div class="wallet-label">Reward Points</div>
+                            <div class="wallet-value"><span id="overview-points">0</span></div>
+                        </div>
+                        <div class="wallet-card">
+                            <div class="wallet-label">Coupon Credits</div>
+                            <div class="wallet-value">₹<span id="overview-credits">0</span></div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 2rem 0 1rem;">Quick Stats</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div
+                            style="background: white; padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+                            <div style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.5rem;">Active
+                                Coupons</div>
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--primary-color);"
+                                id="stat-active">0</div>
+                        </div>
+                        <div
+                            style="background: white; padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+                            <div style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.5rem;">Used
+                                Coupons</div>
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--success-color);" id="stat-used">
+                                0</div>
+                        </div>
+                        <div
+                            style="background: white; padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+                            <div style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.5rem;">Saved Deals
+                            </div>
+                            <div style="font-size: 2rem; font-weight: 700; color: #4f46e5;" id="stat-saved">0</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Wallet Section -->
+                <section id="wallet" class="dashboard-section">
+                    <h2 style="margin-bottom: 1.5rem;">My Wallet</h2>
+                    <div class="wallet-cards">
+                        <div class="wallet-card cashback">
+                            <div class="wallet-label">Total Cashback</div>
+                            <div class="wallet-value">₹<span id="wallet-cashback">0</span></div>
+                        </div>
+                        <div class="wallet-card points">
+                            <div class="wallet-label">Reward Points</div>
+                            <div class="wallet-value"><span id="wallet-points">0</span></div>
+                        </div>
+                        <div class="wallet-card">
+                            <div class="wallet-label">Coupon Credits</div>
+                            <div class="wallet-value">₹<span id="wallet-credits">0</span></div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 2rem 0 1rem;">Recent Transactions</h3>
+                    <div style="background: white; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1rem;"
+                        id="transactions-list">
+                        <!-- Transactions populated by JS -->
+                    </div>
+                </section>
+
+                <!-- Coupons Section -->
+                <section id="coupons" class="dashboard-section">
+                    <h2 style="margin-bottom: 1.5rem;">My Coupons</h2>
+
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="margin-bottom: 1rem; color: var(--success-color);">Active Coupons</h3>
+                        <div id="active-coupons-list">
+                            <!-- Active coupons populated by JS -->
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="margin-bottom: 1rem; color: var(--text-secondary);">Used Coupons</h3>
+                        <div id="used-coupons-list">
+                            <!-- Used coupons populated by JS -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Saved Deals Section -->
+                <section id="saved" class="dashboard-section">
+                    <h2 style="margin-bottom: 1.5rem;">Saved Deals</h2>
+                    <div id="saved-deals-list" class="deal-grid">
+                        <!-- Saved deals populated by JS -->
+                    </div>
+                </section>
+
+                <!-- Referrals Section -->
+                <section id="referrals" class="dashboard-section">
+                    <div class="referral-box">
+                        <h2 style="margin-bottom: 1rem;">Refer & Earn ₹50</h2>
+                        <p style="opacity: 0.9; margin-bottom: 1.5rem;">Share your code and earn rewards when friends
+                            sign up!</p>
+                        <div class="referral-code-display" id="referral-code">LOADING...</div>
+                        <button class="btn btn-secondary" onclick="copyReferralCode()"
+                            style="background: white; color: var(--primary-color);">
+                            <i class="ph-fill ph-copy"></i> Copy Code
+                        </button>
+                    </div>
+
+                    <h3 style="margin: 2rem 0 1rem;">Your Referrals</h3>
+                    <div id="referrals-list"
+                        style="background: white; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1rem;">
+                        <!-- Referrals populated by JS -->
+                    </div>
+                </section>
+
+                <!-- Notifications Section -->
+                <section id="notifications" class="dashboard-section">
+                    <h2 style="margin-bottom: 1.5rem;">Notifications</h2>
+                    <div id="notifications-list">
+                        <!-- Notifications populated by JS -->
+                    </div>
+                </section>
+
+                <!-- Profile Section -->
+                <section id="profile" class="dashboard-section">
+                    <h2 style="margin-bottom: 1.5rem;">My Profile</h2>
+                    <div
+                        style="background: white; padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+                        <div style="display: flex; gap: 2rem; align-items: start; margin-bottom: 2rem;">
+                            <div id="profile-avatar"
+                                style="width: 100px; height: 100px; border-radius: 50%; background: var(--surface-color); display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--primary-color);">
+                                <i class="ph-fill ph-user"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <h3 id="profile-name">User Name</h3>
+                                <p style="color: var(--text-secondary); margin: 0.5rem 0;" id="profile-email">
+                                    email@example.com</p>
+                                <p style="font-size: 0.9rem; color: var(--text-light);">Member since <span
+                                        id="profile-since">2024</span></p>
+                            </div>
+                        </div>
+                        <a href="profile.html" class="btn btn-primary">Edit Profile</a>
+                    </div>
+
+                    <div style="background: white; padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color); margin-top: 1.5rem;"
+                        id="membership-section">
+                        <!-- Membership info populated by JS -->
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script src="js/data.js?v=3"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>

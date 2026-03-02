@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locality Test - Cou-pong</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #FF5A1F;
+        }
+
+        .test-result {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+
+        .pass {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .fail {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .info {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔍 Locality Suggestion Test</h1>
+    <p>Testing Pune locality data and filtering...</p>
+
+    <div id="results"></div>
+
+    <script src="js/data.js"></script>
+    <script>
+        const results = document.getElementById('results');
+
+        // Test 1: Check if Pune exists in CITIES
+        const pune = CITIES.find(c => c.id === 'pune');
+        if (pune) {
+            results.innerHTML += `<div class="test-result pass">✓ Pune city found in dataset</div>`;
+        } else {
+            results.innerHTML += `<div class="test-result fail">✗ Pune city NOT found</div>`;
+        }
+
+        // Test 2: Check locality count
+        if (pune && pune.localities) {
+            const count = pune.localities.length;
+            results.innerHTML += `<div class="test-result ${count === 34 ? 'pass' : 'fail'}">
+                ${count === 34 ? '✓' : '✗'} Pune has ${count} localities (expected: 34)
+            </div>`;
+        }
+
+        // Test 3: Check specific localities
+        const requiredLocalities = ['Baner', 'Balewadi', 'Bavdhan', 'NIBM Road', 'Nigdi'];
+        if (pune && pune.localities) {
+            const missing = requiredLocalities.filter(loc => !pune.localities.includes(loc));
+            if (missing.length === 0) {
+                results.innerHTML += `<div class="test-result pass">✓ All required localities present</div>`;
+            } else {
+                results.innerHTML += `<div class="test-result fail">✗ Missing: ${missing.join(', ')}</div>`;
+            }
+        }
+
+        // Test 4: Test filtering logic
+        if (pune && pune.localities) {
+            const testQuery = 'ba';
+            const matches = pune.localities.filter(l => l.toLowerCase().includes(testQuery));
+            results.innerHTML += `<div class="test-result info">
+                <strong>Filter Test:</strong> Typing "ba" returns ${matches.length} results:<br>
+                <code>${matches.join(', ')}</code>
+            </div>`;
+        }
+
+        // Test 5: Display all Pune localities
+        if (pune && pune.localities) {
+            results.innerHTML += `<div class="test-result info">
+                <strong>All Pune Localities (${pune.localities.length}):</strong><br>
+                <small>${pune.localities.join(' • ')}</small>
+            </div>`;
+        }
+    </script>
+</body>
+
+</html>

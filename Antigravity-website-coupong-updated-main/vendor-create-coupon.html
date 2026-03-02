@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Coupon | Cou-pong Business</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        :root {
+            --business-primary: #4F46E5;
+        }
+
+        .sidebar-link.active {
+            background: #EEF2FF;
+            color: var(--business-primary);
+        }
+
+        .btn-primary {
+            background: var(--business-primary);
+            border-color: var(--business-primary);
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="vendor-dashboard.html" class="logo">
+                <i class="ph-fill ph-tag-chevron" style="color: var(--business-primary);"></i>
+                Cou-<span>pong</span>
+                <span
+                    style="font-size: 0.8rem; background: #EEF2FF; padding: 2px 8px; border-radius: 4px; margin-left: 10px; color: var(--business-primary); font-weight: 600;">Partner</span>
+            </a>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="text-align: right;">
+                    <div style="font-weight: 600;" id="vendor-name-display">Loading...</div>
+                </div>
+                <div style="width: 40px; height: 40px; background: #E0E7FF; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--business-primary); font-weight: bold;"
+                    id="vendor-initials">B</div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <nav class="sidebar-menu">
+                <a href="vendor-dashboard.html" class="sidebar-link"><i class="ph-bold ph-squares-four"></i>
+                    Dashboard</a>
+                <a href="vendor-create-coupon.html" class="sidebar-link active"><i class="ph-bold ph-plus-circle"></i>
+                    Create Coupon</a>
+                <a href="vendor-coupons.html" class="sidebar-link"><i class="ph-bold ph-tag"></i> Coupons</a>
+                <a href="vendor-analytics.html" class="sidebar-link"><i class="ph-bold ph-chart-line-up"></i>
+                    Analytics</a>
+                <a href="vendor-profile.html" class="sidebar-link"><i class="ph-bold ph-storefront"></i> Store
+                    Profile</a>
+                <a href="#" class="sidebar-link" onclick="auth.logout()"
+                    style="margin-top: auto; color: var(--danger-color);"><i class="ph-bold ph-sign-out"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <main class="dashboard-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1 style="font-size: 1.8rem;">Create New Coupon</h1>
+                <a href="vendor-dashboard.html" class="btn btn-text">Cancel</a>
+            </div>
+
+            <form id="create-coupon-form"
+                style="background: white; padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color); max-width: 800px;">
+                <div class="form-section">
+                    <h3 style="margin-bottom: 1rem;">Basic Details</h3>
+                    <div class="form-group">
+                        <label class="form-label">Coupon Title</label>
+                        <input type="text" class="form-input" id="title" placeholder="e.g. 50% Off Pizza" required>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 style="margin-bottom: 1rem;">Discount Rules</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Type</label>
+                            <select class="form-input" id="type">
+                                <option value="percentage">Percentage (%)</option>
+                                <option value="flat">Flat Amount ($)</option>
+                                <option value="b1g1">Buy 1 Get 1</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Value</label>
+                            <input type="number" class="form-input" id="value" placeholder="e.g. 50" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Valid From</label>
+                            <input type="date" class="form-input" id="startDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Expires On</label>
+                            <input type="date" class="form-input" id="endDate" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 style="margin-bottom: 1rem;">Targeting</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">City</label>
+                            <input type="text" class="form-input" id="city" placeholder="e.g. Pune">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Locality / Area</label>
+                            <input type="text" class="form-input" id="locality" placeholder="e.g. Koregaon Park">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label class="form-label">Category</label>
+                        <select class="form-input" id="category">
+                            <option value="food_drink">Food & Drink</option>
+                            <option value="health_fitness">Health & Fitness</option>
+                            <option value="beauty_wellness">Beauty & Wellness</option>
+                            <option value="family">Family</option>
+                            <option value="digital">Digital</option>
+                            <option value="home">Home</option>
+                            <option value="grocery">Grocery</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary"
+                    style="width: 100%; padding: 1rem; font-size: 1rem;">Submit for Approval</button>
+            </form>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/vendor-sim.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const session = auth.getSession();
+            if (!session || session.type !== 'vendor') { window.location.href = 'vendor-login.html'; return; }
+
+            document.getElementById('vendor-name-display').textContent = session.businessName || 'Business';
+            document.getElementById('vendor-initials').textContent = (session.businessName || 'B').charAt(0).toUpperCase();
+
+            document.getElementById('create-coupon-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = e.target.querySelector('button');
+                btn.disabled = true;
+                btn.innerHTML = 'Submitting...';
+
+                const data = {
+                    title: document.getElementById('title').value,
+                    type: document.getElementById('type').value,
+                    value: document.getElementById('value').value,
+                    city: document.getElementById('city').value,
+                    locality: document.getElementById('locality').value, // Added Locality
+                    category: document.getElementById('category').value,
+                    startDate: document.getElementById('startDate').value,
+                    endDate: document.getElementById('endDate').value,
+                    vendorEmail: session.email
+                };
+
+                try {
+                    // Try Real Backend
+                    const response = await fetch('http://localhost:5000/api/vendor/coupons', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    if (response.ok) {
+                        alert("Coupon Submitted Successfully!");
+                        window.location.href = 'vendor-dashboard.html';
+                        return;
+                    }
+                    throw new Error("Backend failed");
+                } catch (e) {
+                    console.warn('Backend offline. Using VendorSim.');
+                    VendorSim.addCoupon(session.email, data);
+                    alert("Coupon created successfully! (Offline Mode)");
+                    window.location.href = 'vendor-dashboard.html';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Coupon | Cou-pong Business</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            --primary-orange: #ff6b35;
+            --primary-purple: #6366f1;
+            --secondary-purple: #8b5cf6;
+            --success-green: #10b981;
+            --error-red: #ef4444;
+            --warning-yellow: #fbbf24;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-700: #374151;
+            --gray-900: #111827;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            margin: 0;
+            color: var(--gray-900);
+            padding-bottom: 80px;
+            /* Space for footer */
+        }
+
+        /* Header */
+        header {
+            background: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo span {
+            color: var(--primary-orange);
+        }
+
+        .badge-partner {
+            background: #EEF2FF;
+            color: var(--primary-purple);
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        /* Wizard Progress */
+        .wizard-progress {
+            max-width: 800px;
+            margin: 2rem auto;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 15px;
+            left: 0;
+            height: 2px;
+            background: var(--gray-200);
+            width: 100%;
+            z-index: 0;
+        }
+
+        .progress-fill {
+            position: absolute;
+            top: 15px;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--secondary-purple), var(--success-green));
+            width: 0%;
+            transition: width 0.4s ease;
+            z-index: 0;
+        }
+
+        .step-indicator {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            width: 80px;
+        }
+
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--gray-300);
+            transition: all 0.3s;
+        }
+
+        .step-indicator.active .step-circle {
+            border-color: var(--primary-purple);
+            background: white;
+            color: var(--primary-purple);
+            box-shadow: 0 0 0 4px #EEF2FF;
+        }
+
+        .step-indicator.completed .step-circle {
+            border-color: var(--success-green);
+            background: var(--success-green);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.85rem;
+            color: var(--gray-300);
+            font-weight: 500;
+        }
+
+        .step-indicator.active .step-label {
+            color: var(--primary-purple);
+            font-weight: 600;
+        }
+
+        .step-indicator.completed .step-label {
+            color: var(--success-green);
+        }
+
+        /* Main Form Card */
+        .main-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            max-width: 900px;
+            margin: 0 auto;
+            overflow: hidden;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .step-content {
+            padding: 3rem;
+            display: none;
+            animation: fadeIn 0.4s ease;
+            flex: 1;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--gray-700);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .required {
+            color: var(--error-red);
+            margin-left: 2px;
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+            background: white;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 3px #EEF2FF;
+        }
+
+        .char-counter {
+            font-size: 0.75rem;
+            color: var(--gray-300);
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        /* Image Upload */
+        .upload-zone {
+            border: 3px dashed var(--gray-300);
+            border-radius: var(--radius-lg);
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--gray-50);
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primary-purple);
+            background: #EEF2FF;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .preview-item {
+            aspect-ratio: 4/3;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            position: relative;
+            background: #eee;
+            border: 1px solid var(--gray-200);
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-badge {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            background: var(--success-green);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        /* Discount Cards */
+        .discount-types {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .discount-card {
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .discount-card:hover {
+            border-color: var(--primary-purple);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+        }
+
+        .discount-card.active {
+            border-color: var(--primary-purple);
+            background: #EEF2FF;
+        }
+
+        /* Calculator */
+        .live-calculator {
+            background: #EEF2FF;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        /* Day Selector */
+        .day-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .day-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 2px solid var(--gray-200);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .day-btn.active {
+            background: var(--primary-purple);
+            color: white;
+            border-color: var(--primary-purple);
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--gray-300);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--success-green);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Preview Step */
+        .preview-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        /* Coupon Card Preview Design */
+        .coupon-preview-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--gray-200);
+            max-width: 350px;
+            margin: 0 auto;
+        }
+
+        .preview-img-area {
+            height: 180px;
+            background: #eee;
+            position: relative;
+        }
+
+        .preview-img-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-discount-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--success-green);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .preview-content {
+            padding: 1.25rem;
+        }
+
+        .preview-footer {
+            border-top: 1px solid var(--gray-100);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Footer Nav */
+        .wizard-footer {
+            background: white;
+            border-top: 1px solid var(--gray-200);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+        }
+
+        .btn {
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 0.875rem 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-text {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        .btn-text:hover {
+            background: var(--gray-200);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-green), #059669);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Success Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            w: 100%;
+            h: 100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-card {
+            background: white;
+            padding: 3rem;
+            border-radius: var(--radius-xl);
+            text-align: center;
+            max-width: 500px;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .preview-container {
+                grid-template-columns: 1fr;
+            }
+
+            .wizard-progress {
+                padding: 0 1rem;
+            }
+
+            .step-indicator {
+                width: auto;
+            }
+
+            .step-label {
+                display: none;
+            }
+
+            .step-content {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <!-- Demo Banner -->
+    <div
+        style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 1rem 2rem; text-align: center; position: sticky; top: 0; z-index: 200;">
+        <strong>🎯 DEMO MODE:</strong> Create a coupon here, then open
+        <a href="customer-search.html" target="_blank"
+            style="color: #fff; text-decoration: underline;">customer-search.html</a>
+        to see it appear in search results immediately!
+    </div>
+
+    <header>
+        <a href="#" class="logo">
+            <i class="ph-fill ph-tag-chevron" style="color: var(--primary-orange);"></i>
+            Cou-<span>pong</span>
+            <span class="badge-partner">Partner</span>
+        </a>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <div
+                style="width: 32px; height: 32px; background: #EEF2FF; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary-purple); font-weight: bold;">
+                B</div>
+        </div>
+    </header>
+
+    <div class="wizard-progress">
+        <div class="progress-line"></div>
+        <div class="progress-fill" id="progress-fill"></div>
+
+        <div class="step-indicator active" data-step="1">
+            <div class="step-circle">1</div>
+            <span class="step-label">Basic Info</span>
+        </div>
+        <div class="step-indicator" data-step="2">
+            <div class="step-circle">2</div>
+            <span class="step-label">Discounts</span>
+        </div>
+        <div class="step-indicator" data-step="3">
+            <div class="step-circle">3</div>
+            <span class="step-label">Schedule</span>
+        </div>
+        <div class="step-indicator" data-step="4">
+            <div class="step-circle">4</div>
+            <span class="step-label">Targeting</span>
+        </div>
+        <div class="step-indicator" data-step="5">
+            <div class="step-circle">5</div>
+            <span class="step-label">Preview</span>
+        </div>
+    </div>
+
+    <form id="wizard-form" class="main-card">
+
+        <!-- Step 1: Basic Info -->
+        <div class="step-content active" id="step-1">
+            <h2>📝 Basic Information</h2>
+            <p class="subtitle">Let's start with the basics of your offer.</p>
+
+            <div class="form-group">
+                <label class="form-label">Coupon Title <span class="required">*</span></label>
+                <input type="text" class="form-input" id="title" placeholder="e.g. 50% Off Summer Special Pizza"
+                    maxlength="100" required>
+                <div class="char-counter"><span id="title-count">0</span>/100</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Short Description <span class="required">*</span></label>
+                <textarea class="form-textarea" id="shortDesc" rows="2"
+                    placeholder="Brief hook text shown in search results..." maxlength="200" required></textarea>
+                <div class="char-counter"><span id="desc-count">0</span>/200</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Category</label>
+                <select class="form-select" id="category">
+                    <option value="food">🍽️ Food & Drink</option>
+                    <option value="health">💪 Health & Fitness</option>
+                    <option value="beauty">💄 Beauty & Wellness</option>
+                    <option value="family">👨👩👧 Family</option>
+                    <option value="digital">💻 Digital</option>
+                    <option value="home">🏠 Home</option>
+                    <option value="grocery">🛒 Grocery</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; background: var(--gray-50); padding: 1rem; border-radius: var(--radius-md);">
+                    <div>
+                        <label class="form-label" style="margin-bottom: 0;">Featured Deal</label>
+                        <p style="font-size: 0.8rem; color: var(--gray-700); margin: 0;">Get priority placement for
+                            higher visibility</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="isFeatured">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Images</label>
+                <div class="upload-zone" onclick="document.getElementById('img-upload').click()">
+                    <i class="ph ph-camera" style="font-size: 3rem; color: var(--gray-300);"></i>
+                    <p style="margin-top: 1rem;">Click to upload images or drag and drop</p>
+                    <p style="font-size: 0.8rem; color: var(--gray-300);">Recommended: 1200x630px</p>
+                    <input type="file" id="img-upload" multiple accept="image/*" style="display: none;">
+                </div>
+                <div id="preview-gallery" class="preview-grid"></div>
+            </div>
+        </div>
+
+        <!-- Step 2: Discount Settings -->
+        <div class="step-content" id="step-2">
+            <h2>💰 Discount Settings</h2>
+            <p class="subtitle">Configure the value of your deal.</p>
+
+            <div class="discount-types">
+                <div class="discount-card active" data-type="percentage">
+                    <i class="ph ph-percent"
+                        style="font-size: 2rem; color: var(--primary-purple); margin-bottom: 0.5rem;"></i>
+                    <div style="font-weight: 700;">Percentage</div>
+                    <div style="font-size: 0.8rem; color: var(--gray-700);">e.g. 20% Off</div>
+                </div>
+                <div class="discount-card" data-type="fixed">
+                    <i class="ph ph-currency-inr"
+                        style="font-size: 2rem; color: var(--primary-purple); margin-bottom: 0.5rem;"></i>
+                    <div style="font-weight: 700;">Fixed Amount</div>
+                    <div style="font-size: 0.8rem; color: var(--gray-700);">e.g. ₹100 Off</div>
+                </div>
+                <div class="discount-card" data-type="bogo">
+                    <i class="ph ph-gift"
+                        style="font-size: 2rem; color: var(--primary-purple); margin-bottom: 0.5rem;"></i>
+                    <div style="font-weight: 700;">Buy X Get Y</div>
+                    <div style="font-size: 0.8rem; color: var(--gray-700);">e.g. BOGO</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Discount Value <span class="required">*</span></label>
+                <input type="number" class="form-input" id="discountValue" placeholder="Enter percentage (0-100)"
+                    required>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div class="form-group">
+                    <label class="form-label">Min Purchase (₹)</label>
+                    <input type="number" class="form-input" id="minPurchase" placeholder="Optional">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Max Cap (₹)</label>
+                    <input type="number" class="form-input" id="maxCap" placeholder="Optional">
+                </div>
+            </div>
+
+            <div class="live-calculator">
+                <h4 style="margin: 0 0 1rem 0; display: flex; align-items: center; gap: 8px;">
+                    <i class="ph-fill ph-calculator"></i> Live Calculator
+                </h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <label class="form-label">Original Price</label>
+                        <input type="number" class="form-input" id="calc-original" value="1000">
+                    </div>
+                    <div>
+                        <label class="form-label">Final Price</label>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: var(--success-green); padding: 0.5rem 0;"
+                            id="calc-final">₹1000</div>
+                    </div>
+                </div>
+                <div style="text-align: right; color: var(--error-red); font-weight: 600; margin-top: 5px;"
+                    id="calc-savings">You save: ₹0</div>
+            </div>
+        </div>
+
+        <!-- Step 3: Scheduling -->
+        <div class="step-content" id="step-3">
+            <h2>📅 Availability & Scheduling</h2>
+            <p class="subtitle">When is this valid?</p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div class="form-group">
+                    <label class="form-label">Total Coupons</label>
+                    <input type="number" class="form-input" id="totalCoupons" placeholder="Unlimited">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Per User Limit</label>
+                    <input type="number" class="form-input" id="userLimit" value="1">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div class="form-group">
+                    <label class="form-label">Valid From</label>
+                    <input type="datetime-local" class="form-input" id="startDate" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Expires On</label>
+                    <input type="datetime-local" class="form-input" id="endDate" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Active Days</label>
+                <div class="day-selector">
+                    <div class="day-btn active">Mon</div>
+                    <div class="day-btn active">Tue</div>
+                    <div class="day-btn active">Wed</div>
+                    <div class="day-btn active">Thu</div>
+                    <div class="day-btn active">Fri</div>
+                    <div class="day-btn active">Sat</div>
+                    <div class="day-btn active">Sun</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div class="form-group">
+                    <label class="form-label">Time From</label>
+                    <input type="time" class="form-input" id="timeFrom">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Time To</label>
+                    <input type="time" class="form-input" id="timeTo">
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4: Targeting -->
+        <div class="step-content" id="step-4">
+            <h2>🎯 Targeting & Restrictions</h2>
+
+            <div class="form-group">
+                <label class="form-label">City <span class="required">*</span></label>
+                <input type="text" class="form-input" id="city" placeholder="e.g. Pune" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Locality <span class="required">*</span></label>
+                <input type="text" class="form-input" id="locality" placeholder="e.g. Koregaon Park" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Applicable On</label>
+                <div class="day-selector">
+                    <div class="day-btn active" style="width: auto; padding: 0 1rem;">All</div>
+                    <div class="day-btn" style="width: auto; padding: 0 1rem;">Dine-in</div>
+                    <div class="day-btn" style="width: auto; padding: 0 1rem;">Takeaway</div>
+                    <div class="day-btn" style="width: auto; padding: 0 1rem;">Delivery</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Terms & Conditions</label>
+                <textarea class="form-textarea" rows="5" placeholder="Enter terms..."></textarea>
+            </div>
+        </div>
+
+        <!-- Step 5: Preview -->
+        <div class="step-content" id="step-5">
+            <h2>👁️ Preview & Submit</h2>
+            <p class="subtitle">Check exactly how customers will see your deal.</p>
+
+            <div class="preview-container">
+                <!-- Left: Card Preview -->
+                <div>
+                    <div class="coupon-preview-card">
+                        <div class="preview-img-area">
+                            <img id="final-preview-img" src="https://source.unsplash.com/random/400x300/?food"
+                                alt="Deal Image">
+                            <div class="preview-discount-badge" id="final-badge">20% OFF</div>
+                        </div>
+                        <div class="preview-content">
+                            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+                                <div style="width: 24px; height: 24px; background: #eee; border-radius: 50%;"></div>
+                                <span style="font-size: 0.85rem; color: var(--gray-700);">My Business</span>
+                            </div>
+                            <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0 0 4px 0;" id="final-title">Title
+                                Here</h3>
+                            <p style="font-size: 0.9rem; color: var(--gray-700); margin: 0;" id="final-desc">Description
+                                line here...</p>
+
+                            <div style="display: flex; gap: 8px; margin-top: 1rem;">
+                                <span
+                                    style="background:var(--gray-100); padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">📍
+                                    <span id="final-loc">Pune</span></span>
+                            </div>
+                        </div>
+                        <div class="preview-footer">
+                            <div style="color: var(--error-red); font-size: 0.85rem; font-weight: 600;">⏰ Expires in 7
+                                days</div>
+                            <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Redeem
+                                Now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Reach & Checklist -->
+                <div>
+                    <div
+                        style="background: linear-gradient(135deg, #8B5CF6, #6366F1); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; text-align: center;">
+                        <div style="font-size: 2.5rem; font-weight: 800;">~12,500</div>
+                        <div>Estimated users in your target area</div>
+                    </div>
+
+                    <div
+                        style="background: var(--gray-50); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--gray-200);">
+                        <h4 style="margin-top: 0;">Submission Checklist</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            <li style="margin-bottom: 8px; display: flex; gap: 8px; color: var(--gray-700);"><i
+                                    class="ph-fill ph-check-circle" style="color: var(--success-green);"></i> Details
+                                Complete</li>
+                            <li style="margin-bottom: 8px; display: flex; gap: 8px; color: var(--gray-700);"><i
+                                    class="ph-fill ph-check-circle" style="color: var(--success-green);"></i> Images
+                                Added</li>
+                            <li style="margin-between: 8px; display: flex; gap: 8px; color: var(--gray-700);"><i
+                                    class="ph-fill ph-check-circle" style="color: var(--success-green);"></i> Valid
+                                Dates</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+    <!-- Footer Nav -->
+    <div class="wizard-footer">
+        <button type="button" class="btn btn-text" id="prevBtn" disabled>← Previous</button>
+        <div style="display: flex; gap: 1rem;">
+            <button type="button" class="btn btn-text">💾 Save Draft</button>
+            <button type="button" class="btn btn-primary" id="nextBtn">Next →</button>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-card">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🎉</div>
+            <h2>Coupon Published Successfully!</h2>
+            <p style="color: var(--gray-700); margin-bottom: 2rem;">Your coupon is now live and available to ~12,500
+                users in your target area!</p>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button class="btn btn-text" onclick="location.reload()">Create Another</button>
+                <button class="btn btn-primary" onclick="alert('Navigating to dashboard...')">View My Coupons</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/coupong-db.js"></script>
+    <script>
+        // Initialize DB
+        initializeDatabase();
+
+        // State
+        let currentStep = 1;
+        const totalSteps = 5;
+        let discountType = 'percentage';
+
+        // DOM Elements
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressBar = document.getElementById('progress-fill');
+
+        // --- Navigation Logic ---
+        function updateUI() {
+            // Update Headers
+            document.querySelectorAll('.step-indicator').forEach(el => {
+                const step = parseInt(el.dataset.step);
+                el.classList.remove('active', 'completed');
+                if (step === currentStep) el.classList.add('active');
+                if (step < currentStep) el.classList.add('completed');
+            });
+
+            // Show Content
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+
+            // Update Progress Bar
+            progressBar.style.width = ((currentStep - 1) / (totalSteps - 1)) * 100 + '%';
+
+            // Buttons
+            prevBtn.disabled = currentStep === 1;
+
+            if (currentStep === totalSteps) {
+                nextBtn.textContent = '🚀 Publish Coupon';
+                nextBtn.className = 'btn btn-success';
+                updateFinalPreview();
+            } else {
+                nextBtn.textContent = 'Next →';
+                nextBtn.className = 'btn btn-primary';
+            }
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentStep < totalSteps) {
+                // Validate current step
+                if (!validateStep(currentStep)) return;
+                currentStep++;
+                updateUI();
+            } else {
+                // Publish
+                publishCoupon();
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+                updateUI();
+            }
+        });
+
+        // Allow step click (only backward)
+        document.querySelectorAll('.step-indicator').forEach(el => {
+            el.addEventListener('click', () => {
+                const step = parseInt(el.dataset.step);
+                if (step < currentStep) {
+                    currentStep = step;
+                    updateUI();
+                }
+            });
+        });
+
+        // --- Validation ---
+        function validateStep(step) {
+            const container = document.getElementById(`step-${step}`);
+            const inputs = container.querySelectorAll('input[required], textarea[required]');
+            let valid = true;
+
+            inputs.forEach(input => {
+                if (!input.value) {
+                    input.style.borderColor = 'var(--error-red)';
+                    valid = false;
+                } else {
+                    input.style.borderColor = 'var(--gray-300)';
+                }
+            });
+
+            if (!valid) alert('Please fill in all required fields marked with *');
+            return valid;
+        }
+
+        // --- Dynamic Form Features ---
+
+        // Char Counters
+        document.getElementById('title').addEventListener('input', function () {
+            document.getElementById('title-count').textContent = this.value.length;
+        });
+        document.getElementById('shortDesc').addEventListener('input', function () {
+            document.getElementById('desc-count').textContent = this.value.length;
+        });
+
+        // Discount types
+        document.querySelectorAll('.discount-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.discount-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                discountType = card.dataset.type;
+
+                const input = document.getElementById('discountValue');
+                if (discountType === 'percentage') input.placeholder = 'Enter percentage (0-100)';
+                else if (discountType === 'fixed') input.placeholder = 'Enter fixed amount in ₹';
+                else input.placeholder = 'Quantity for Buy X';
+            });
+        });
+
+        // Calculator
+        const calcInputs = ['calc-original', 'discountValue'];
+        calcInputs.forEach(id => {
+            const el = document.getElementById(id) || document.getElementById('discountValue'); // fallback logic
+            if (el) el.addEventListener('input', calculateSavings);
+        });
+
+        function calculateSavings() {
+            const original = parseFloat(document.getElementById('calc-original').value) || 0;
+            const discountVal = parseFloat(document.getElementById('discountValue').value) || 0;
+            const maxCap = parseFloat(document.getElementById('maxCap').value) || Infinity;
+
+            let final = original;
+            let savings = 0;
+
+            if (discountType === 'percentage') {
+                savings = (original * discountVal) / 100;
+                if (savings > maxCap) savings = maxCap;
+            } else if (discountType === 'fixed') {
+                savings = discountVal;
+            }
+
+            final = Math.max(0, original - savings);
+
+            document.getElementById('calc-final').textContent = '₹' + final.toFixed(2);
+            document.getElementById('calc-savings').textContent = 'You save: ₹' + savings.toFixed(2);
+        }
+
+        // Image Upload Simulation
+        let uploadedImage = null;
+        document.getElementById('img-upload').addEventListener('change', function (e) {
+            const files = e.target.files;
+            const gallery = document.getElementById('preview-gallery');
+            gallery.innerHTML = ''; // Clear for demo simplicity
+
+            if (files.length > 0) {
+                // Create mock preview for first file
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    uploadedImage = e.target.result; // Save base64
+                    const div = document.createElement('div');
+                    div.className = 'preview-item';
+                    div.innerHTML = `
+                        <img src="${e.target.result}" id="uploaded-preview">
+                        <div class="preview-badge">Primary</div>
+                        <div class="remove-btn">×</div>
+                     `;
+                    gallery.appendChild(div);
+                }
+                reader.readAsDataURL(files[0]);
+            }
+        });
+
+        // Day Selectors
+        document.querySelectorAll('.day-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                if (!this.textContent.includes('All')) // Don't toggle 'All' logic for simplicity
+                    this.classList.toggle('active');
+            });
+        });
+
+        // --- Final Publish ---
+        function updateFinalPreview() {
+            document.getElementById('final-title').textContent = document.getElementById('title').value || 'Title';
+            document.getElementById('final-desc').textContent = document.getElementById('shortDesc').value || 'Description';
+            document.getElementById('final-loc').textContent = document.getElementById('locality').value || 'Location';
+
+            const val = document.getElementById('discountValue').value;
+            let badgeText = '';
+            if (discountType === 'percentage') badgeText = `${val}% OFF`;
+            else if (discountType === 'fixed') badgeText = `₹${val} OFF`;
+            else badgeText = 'BOGO DEAL';
+            document.getElementById('final-badge').textContent = badgeText;
+
+            // Try to use uploaded image
+            const upImg = document.getElementById('uploaded-preview');
+            if (upImg) document.getElementById('final-preview-img').src = upImg.src;
+        }
+
+        function publishCoupon() {
+            console.log('📝 Creating new coupon...');
+
+            // Gather Data
+            const activeDays = Array.from(document.querySelectorAll('.day-btn.active'))
+                .map(el => el.textContent)
+                .filter(d => d !== 'All') // Exclude 'All' headers
+                .map(d => {
+                    const map = { 'Mon': 'Monday', 'Tue': 'Tuesday', 'Wed': 'Wednesday', 'Thu': 'Thursday', 'Fri': 'Friday', 'Sat': 'Saturday', 'Sun': 'Sunday' };
+                    return map[d] || d;
+                });
+
+            const couponData = {
+                title: document.getElementById('title').value,
+                short_description: document.getElementById('shortDesc').value,
+                category: document.getElementById('category').value,
+
+                discount_type: discountType,
+                discount_value: parseFloat(document.getElementById('discountValue').value),
+                min_purchase_amount: parseFloat(document.getElementById('minPurchase').value) || 0,
+                max_discount_cap: parseFloat(document.getElementById('maxCap').value) || null,
+
+                total_coupons: document.getElementById('totalCoupons').value ? parseInt(document.getElementById('totalCoupons').value) : null,
+                per_user_limit: parseInt(document.getElementById('userLimit').value) || 1,
+
+                valid_from: document.getElementById('startDate').value,
+                expires_on: document.getElementById('endDate').value,
+                active_days: activeDays,
+                active_time_from: document.getElementById('timeFrom').value || null,
+                active_time_to: document.getElementById('timeTo').value || null,
+
+                city: document.getElementById('city').value,
+                locality: document.getElementById('locality').value,
+
+                primary_image: uploadedImage || 'https://source.unsplash.com/random/400x300/?coupon',
+                is_featured: document.getElementById('isFeatured').checked
+            };
+
+            console.log('💾 Saving coupon:', couponData);
+
+            // Save to DB
+            const saved = saveCoupon(couponData);
+
+            console.log('✅ Coupon saved with ID:', saved.id);
+
+            // Show Success
+            const modal = document.getElementById('successModal');
+            modal.classList.add('active');
+        }
+
+    </script>
+</body>
+
+</html>

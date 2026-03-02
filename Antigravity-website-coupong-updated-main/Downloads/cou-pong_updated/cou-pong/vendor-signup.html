@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Registration | Cou-pong Business</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        :root {
+            --business-primary: #4F46E5;
+            /* Indigo */
+        }
+
+        body {
+            background: #F3F4F6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            padding: 2rem 1rem;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            padding: 2.5rem;
+            border-radius: var(--radius-xl);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo span {
+            color: var(--business-primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: var(--business-primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .btn-business {
+            background-color: var(--business-primary);
+            color: white;
+            width: 100%;
+            padding: 0.875rem;
+            border-radius: var(--radius-full);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-business:hover {
+            opacity: 0.9;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .auth-footer a {
+            color: var(--business-primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .badge-business {
+            background: #EEF2FF;
+            color: var(--business-primary);
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            vertical-align: middle;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="auth-container animate-fade-in">
+        <div class="auth-card" id="signup-card">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <a href="index.html" class="logo"
+                    style="display: inline-block; text-decoration: none; font-size: 1.5rem; font-weight: 800; color: var(--text-main);">
+                    <i class="ph-fill ph-tag-chevron" style="color: var(--business-primary);"></i>
+                    Cou-<span>pong</span>
+                </a>
+                <span class="badge-business">FOR BUSINESS</span>
+            </div>
+
+            <h2 id="auth-title" style="margin-bottom: 0.5rem; font-family: 'Outfit', sans-serif; font-size: 1.5rem;">
+                Partner Registration</h2>
+            <p id="auth-subtitle" style="color: var(--text-secondary); margin-bottom: 2rem;">List your business and
+                reach thousands of customers.</p>
+
+            <form id="vendor-signup-form">
+                <!-- Owner Details -->
+                <div class="form-group">
+                    <label class="form-label">Owner Name</label>
+                    <input type="text" class="form-input" id="ownerName" placeholder="John Doe" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Business Email</label>
+                    <input type="email" class="form-input" id="email" placeholder="owner@business.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" class="form-input" id="phone" placeholder="+1 234 567 8900" required>
+                </div>
+
+                <!-- Business Details -->
+                <div class="form-group">
+                    <label class="form-label">Business Name</label>
+                    <input type="text" class="form-input" id="businessName" placeholder="Bella Italia Restaurant"
+                        required>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select class="form-input" id="category" required>
+                            <option value="">Select...</option>
+                            <option value="food">Food & Drink</option>
+                            <option value="beauty">Beauty & Spa</option>
+                            <option value="health">Health & Fitness</option>
+                            <option value="retail">Retail</option>
+                            <option value="services">Services</option>
+                            <option value="events">Events</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">City</label>
+                        <input type="text" class="form-input" id="city" placeholder="New York" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="password" placeholder="Min. 8 characters" required>
+                </div>
+
+                <button type="submit" class="btn-business">Register Business</button>
+            </form>
+
+            <div class="auth-footer" id="auth-footer">
+                Already have a partner account? <a href="vendor-login.html">Log In</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- We will need a specific auth handler for vendors -->
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('vendor-signup-form');
+            const title = document.getElementById('auth-title');
+            const subtitle = document.getElementById('auth-subtitle');
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = form.querySelector('button');
+
+                const data = {
+                    ownerName: document.getElementById('ownerName').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    businessName: document.getElementById('businessName').value,
+                    category: document.getElementById('category').value,
+                    city: document.getElementById('city').value,
+                    password: document.getElementById('password').value
+                };
+
+                if (data.password.length < 8) {
+                    alert("Password to short"); return;
+                }
+
+                btn.disabled = true;
+                btn.innerHTML = 'Creating Account...';
+
+                try {
+                    // We will implement auth.requestVendorSignup next
+                    // If auth.js doesn't have it yet, this will fail. 
+                    // But we will update auth.js immediately after this.
+                    const result = await auth.requestVendorSignup(data);
+
+                    if (result.success) {
+                        form.style.display = 'none';
+                        title.textContent = "Verify Your Email";
+                        subtitle.innerHTML = `We sent a verification link to <strong>${data.email}</strong>.<br>Please verify to access your dashboard.`;
+                        document.getElementById('auth-footer').style.display = 'none';
+                    } else {
+                        alert(result.error);
+                        btn.disabled = false;
+                        btn.innerHTML = 'Register Business';
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("Error: " + err.message);
+                    btn.disabled = false;
+                    btn.innerHTML = 'Register Business';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmed | Cou-pong</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .confirmation-card {
+            max-width: 600px;
+            margin: 4rem auto;
+            text-align: center;
+            background: white;
+            padding: 3rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .success-icon {
+            font-size: 5rem;
+            color: var(--success-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .order-details {
+            margin-top: 2rem;
+            text-align: left;
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <i class="ph-fill ph-tag-chevron"></i>
+                Cou-<span>pong</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="container" id="confirmation-content" style="display: none;">
+        <div class="confirmation-card fade-in">
+            <i class="ph-fill ph-check-circle success-icon"></i>
+            <h1 style="margin-bottom: 0.5rem; font-family: var(--font-heading);">Payment Successful!</h1>
+            <p style="color: var(--text-secondary);">Your order has been verified and confirmed.</p>
+
+            <div class="order-details">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <strong>Order ID:</strong>
+                    <span id="order-id">...</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <strong>Date:</strong>
+                    <span id="order-date">...</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <strong>Payment Method:</strong>
+                    <span id="payment-method" style="text-transform: capitalize;">...</span>
+                </div>
+                <div
+                    style="display: flex; justify-content: space-between; margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                    <strong>Total Amount:</strong>
+                    <span id="order-total" style="font-weight: 700; color: var(--primary-color);">...</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center;">
+                <a href="my-dashboard.html" class="btn btn-secondary">View My Coupons</a>
+                <a href="index.html" class="btn btn-primary">Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const orderId = params.get('orderId');
+            const verified = params.get('verified');
+
+            // Security Check
+            if (!orderId) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const user = auth.getSession();
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Verify Order Status
+            const orders = JSON.parse(localStorage.getItem('coupong_orders_' + user.email) || '[]');
+            const order = orders.find(o => o.id === orderId);
+
+            if (!order) {
+                alert('Order not found.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            if (order.status !== 'Paid') {
+                alert('Payment verification failed. Please try again.');
+                window.location.href = 'checkout.html';
+                return;
+            }
+
+            // If verified, show content
+            document.getElementById('confirmation-content').style.display = 'block';
+
+            // Populate Data
+            document.getElementById('order-id').textContent = order.id;
+            document.getElementById('order-date').textContent = new Date(order.date).toLocaleString();
+            document.getElementById('order-total').textContent = `₹${order.amount || order.total}`; // Handle both schemas
+            document.getElementById('payment-method').textContent = order.payment ? order.payment.method : 'Card';
+
+        });
+    </script>
+</body>
+
+</html>

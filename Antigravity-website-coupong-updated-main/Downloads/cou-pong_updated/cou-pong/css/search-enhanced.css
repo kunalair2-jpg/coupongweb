@@ -1,0 +1,242 @@
+/* =========================================
+   Animated Search Bar (Redesigned)
+   ========================================= */
+
+.hero-search-container {
+    background: white;
+    padding: 0;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-premium);
+    display: flex;
+    max-width: 850px;
+    margin: 0 auto;
+    border: 1px solid var(--border-color);
+    position: relative;
+    align-items: center;
+    height: 60px;
+    z-index: 100;
+    overflow: visible;
+    /* Needed for dropdowns to spill out */
+    transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+/* Custom Scrollbar for Dropdown */
+.suggestions-dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+
+.suggestions-dropdown::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.suggestions-dropdown::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.suggestions-dropdown::-webkit-scrollbar-thumb:hover {
+    background: #bbb;
+}
+
+/* Common Group Styles */
+.search-input-group {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-sm);
+    position: relative;
+    background: white;
+    transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.search-input-group input {
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    color: var(--text-primary);
+    background: transparent;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 8px;
+}
+
+.search-input-group i {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    margin-left: 10px;
+}
+
+/* --- STEP 1: Initial State (City Full Width) --- */
+.group-location {
+    flex: 1;
+    /* Takes full width initially */
+    border-radius: var(--radius-full);
+    z-index: 30;
+}
+
+/* --- Hiding Logic for Next Steps --- */
+.group-locality,
+.group-keyword {
+    flex: 0.00001;
+    /* tiny fraction to allow transition */
+    width: 0;
+    padding: 0;
+    opacity: 0;
+    overflow: hidden;
+    border-left: 1px solid transparent;
+}
+
+/* --- STEP 2: Locality Appears --- */
+.group-locality.visible {
+    flex: 0.8;
+    /* Shares space */
+    width: auto;
+    opacity: 1;
+    padding: 0 var(--spacing-sm);
+    border-left: 1px solid var(--border-color);
+    z-index: 20;
+}
+
+/* When locality appears, City shrinks but keeps rounded left */
+.hero-search-container.step-2 .group-location {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+/* --- STEP 3: Keyword Appears --- */
+.group-keyword.visible {
+    flex: 1.2;
+    /* Takes more space for typing */
+    width: auto;
+    opacity: 1;
+    padding: 0 var(--spacing-sm);
+    border-left: 1px solid var(--border-color);
+    z-index: 10;
+}
+
+/* Button Transition */
+.search-btn-wrapper {
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding: 0;
+    transition: all 0.5s ease;
+}
+
+.hero-search-container.step-3 .search-btn-wrapper {
+    width: auto;
+    opacity: 1;
+    padding: 5px;
+    margin-left: 5px;
+}
+
+.hero-search-btn {
+    height: 50px;
+    padding: 0 1.5rem;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+}
+
+
+/* Dropdowns */
+.suggestions-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    min-width: 250px;
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    /* Deeper shadow for elevation */
+    border: 1px solid var(--border-color);
+    opacity: 0;
+    visibility: hidden;
+    margin-top: 8px;
+    /* Consistent spacing */
+    transform: translateY(-8px);
+    transition: all 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+    z-index: 10000;
+    /* Maximum Z-Index */
+    max-height: 320px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.suggestions-dropdown.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.suggestion-item {
+    padding: 12px 15px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    border-bottom: 1px solid var(--surface-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-secondary);
+}
+
+.suggestion-item:hover,
+.suggestion-item.suggestion-active {
+    background: #FFF5F0;
+    color: var(--primary-color);
+}
+
+.suggestion-item i {
+    color: #ccc;
+}
+
+.suggestion-item:hover i {
+    color: var(--primary-color);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .hero-search-container {
+        flex-direction: column;
+        height: auto;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+    }
+
+    .search-input-group {
+        width: 100%;
+        height: 60px;
+        border-radius: var(--radius-full) !important;
+        margin-bottom: 10px;
+        background: white;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+    }
+
+    .group-locality,
+    .group-keyword {
+        display: none;
+    }
+
+    .group-locality.visible,
+    .group-keyword.visible {
+        display: flex;
+        width: 100%;
+        flex: auto;
+        opacity: 1;
+    }
+
+    .search-btn-wrapper {
+        width: 100% !important;
+        opacity: 1 !important;
+    }
+
+    .hero-search-btn {
+        width: 100%;
+    }
+}

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deal Details | Cou-pong</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .deal-option-card {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .deal-option-card:hover {
+            border-color: var(--primary-color);
+            background: var(--surface-color);
+        }
+
+        .deal-option-card.selected {
+            border-color: var(--primary-color);
+            background: #fff5f0;
+            box-shadow: 0 0 0 1px var(--primary-color);
+        }
+
+        .tab-nav {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-btn {
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .location-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            font-family: inherit;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <i class="ph-fill ph-tag-chevron"></i>
+                Cou-<span>pong</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Back to Deals</a>
+                <a href="cart.html" class="nav-link" style="position: relative;">
+                    <i class="ph-fill ph-shopping-cart" style="font-size: 1.25rem;"></i>
+                    <span class="cart-count-badge"
+                        style="position: absolute; top: -5px; right: -10px; background: var(--primary-color); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; display: none;">0</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container" style="padding-bottom: 4rem;">
+
+        <!-- Breadcrumb -->
+        <div style="margin-top: 2rem; color: var(--text-light); font-size: 0.9rem;">
+            <a href="index.html">Home</a> <i class="ph ph-caret-right"></i> <span id="deal-category">Category</span> <i
+                class="ph ph-caret-right"></i> <span id="deal-breadcrumb-title">Deal</span>
+        </div>
+
+        <div class="detail-grid">
+
+            <!-- Left Column -->
+            <div class="detail-content">
+                <h1 id="deal-title" style="font-size: 2.5rem; margin-bottom: 0.5rem;">Loading...</h1>
+                <div class="store-info" style="margin-bottom: 1.5rem;">
+                    <img id="store-logo" src="" alt="Store" class="store-logo" style="width: 32px; height: 32px;">
+                    <span id="store-name" style="font-weight: 600; font-size: 1.1rem;">Store Name</span>
+                    <span id="store-rating" style="color: var(--warning-color); margin-left: 10px;">★★★★★</span>
+                    <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                        <button class="btn btn-text" style="padding: 0.5rem;"><i class="ph ph-share-network"></i>
+                            Share</button>
+                        <button class="btn btn-text" id="save-btn" style="padding: 0.5rem;"
+                            onclick="toggleSaveDeal()"><i class="ph ph-heart"></i> Save</button>
+                    </div>
+                </div>
+
+                <div class="detail-gallery">
+                    <img id="deal-image" src="" alt="Deal Image">
+                </div>
+
+                <div style="margin-top: 3rem;">
+                    <div class="tab-nav">
+                        <div class="tab-btn active" onclick="switchTab('highlights')">Highlights</div>
+                        <div class="tab-btn" onclick="switchTab('details')">What You Need To Know</div>
+                        <div class="tab-btn" onclick="switchTab('reviews')">Reviews</div>
+                    </div>
+
+                    <div id="highlights" class="tab-content active">
+                        <h3 style="margin-bottom: 1rem;">What You Get</h3>
+                        <p id="deal-description" style="color: var(--text-secondary); line-height: 1.8;">
+                            Description...
+                        </p>
+                        <div style="margin-top: 1.5rem;">
+                            <h4>Features</h4>
+                            <ul style="list-style: disc; padding-left: 1.2rem; color: var(--text-secondary); margin-top: 0.5rem;"
+                                id="deal-features">
+                                <li>Instant Confirmation</li>
+                                <li>Mobile Voucher Accepted</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div id="details" class="tab-content">
+                        <h3 style="margin-bottom: 1rem;">Fine Print</h3>
+                        <ul
+                            style="list-style: disc; padding-left: 1.5rem; color: var(--text-secondary); line-height: 1.6;">
+                            <li>Valid for dine-in/takeout as specified.</li>
+                            <li>Limit 1 per person.</li>
+                            <li>Expires: <span id="deal-expiry"></span></li>
+                            <li>Cannot be combined with other offers.</li>
+                            <li>Tax and gratuity not included.</li>
+                        </ul>
+                    </div>
+
+                    <div id="reviews" class="tab-content">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                            <div style="font-size: 3rem; font-weight: 700;">4.8</div>
+                            <div>
+                                <div style="color: var(--warning-color);">★★★★★</div>
+                                <div style="color: var(--text-light);">Based on 124 reviews</div>
+                            </div>
+                        </div>
+                        <!-- Mock Review -->
+                        <div
+                            style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <strong>John Doe</strong>
+                                <span style="color: var(--text-light); font-size: 0.9rem;">2 days ago</span>
+                            </div>
+                            <div style="color: var(--warning-color); font-size: 0.9rem; margin-bottom: 0.5rem;">★★★★★
+                            </div>
+                            <p style="color: var(--text-secondary);">Great experience! Highly recommended.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 3rem;" id="location-section">
+                    <h3 style="margin-bottom: 1rem;">Location & Contact</h3>
+                    <div id="detail-map"
+                        style="height: 300px; background: #eee; border-radius: var(--radius-lg); margin-bottom: 1rem;">
+                    </div>
+                    <div id="store-address-box">
+                        <h4 id="store-location-name">Main Branch</h4>
+                        <p id="store-address" style="color: var(--text-secondary); margin-top: 0.25rem;"><i
+                                class="ph-fill ph-map-pin"></i> Loading...</p>
+                        <p id="store-phone" style="color: var(--text-secondary); margin-top: 0.25rem;"><i
+                                class="ph-fill ph-phone"></i> (555) 123-4567</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <aside class="detail-sidebar">
+                <div style="position: sticky; top: 100px;">
+                    <div style="margin-bottom: 1.5rem;">
+                        <h3 style="margin-bottom: 1rem;">Select Option</h3>
+                        <div id="deal-options-container">
+                            <!-- Options injected here -->
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;" id="location-select-container">
+                        <h3 style="margin-bottom: 1rem; font-size: 1rem;">Choose Location</h3>
+                        <select id="deal-location-select" class="location-select">
+                            <!-- Locations injected here -->
+                        </select>
+                    </div>
+
+                    <div
+                        style="background: var(--surface-color); padding: 1.5rem; border-radius: var(--radius-lg); text-align: center; margin-bottom: 1.5rem;">
+                        <div
+                            style="display: flex; justify-content: center; align-items: baseline; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <span id="final-original-price"
+                                style="text-decoration: line-through; color: var(--text-light); font-size: 1.1rem;">₹0</span>
+                            <span id="final-price"
+                                style="font-size: 2.5rem; font-weight: 800; color: var(--primary-color);">₹0</span>
+                        </div>
+                        <div
+                            style="color: var(--success-color); font-weight: 600; font-size: 0.9rem; margin-bottom: 1rem;">
+                            <span id="final-discount">0% OFF</span>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                            <button class="btn btn-secondary" onclick="addToCart()" style="flex: 1;"><i
+                                    class="ph-fill ph-shopping-cart"></i> Add to Cart</button>
+                            <button class="btn btn-primary" onclick="buyNow()" style="flex: 1;">Buy Now</button>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-light); margin-top: 1rem;">
+                            <i class="ph-fill ph-gift"></i> <a href="#" style="text-decoration: underline;">Gift this
+                                deal</a>
+                        </div>
+                    </div>
+
+                    <div style="border: 1px solid #e5e7eb; border-radius: var(--radius-md); padding: 1rem;">
+                        <div style="display: flex; gap: 0.75rem; margin-bottom: 0.75rem;">
+                            <i class="ph-fill ph-shield-check"
+                                style="font-size: 1.5rem; color: var(--success-color);"></i>
+                            <div>
+                                <div style="font-weight: 600;">Secure Checkout</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">256-bit SSL Encryption
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.75rem;">
+                            <i class="ph-fill ph-thumbs-up" style="font-size: 1.5rem; color: var(--primary-color);"></i>
+                            <div>
+                                <div style="font-weight: 600;">Satisfaction Guaranteed</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">7-day refund policy</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+
+        <!-- Recommended Deals -->
+        <section style="margin-top: 4rem; border-top: 1px solid var(--border-color); padding-top: 3rem;">
+            <h2 class="section-title">You Might Also Like</h2>
+            <div class="deal-grid" id="recommended-grid">
+                <!-- Recommendations -->
+            </div>
+        </section>
+
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script src="js/data.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/deal-page.js"></script>
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+    </script>
+</body>
+
+</html>

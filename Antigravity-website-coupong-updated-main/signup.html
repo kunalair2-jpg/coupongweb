@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Cou-pong</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body {
+            background: var(--surface-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 440px;
+            background: white;
+            padding: 2.5rem;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.75rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .message-box {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .message-box.error {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .message-box.success {
+            background: #dcfce7;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 71, 87, 0.1);
+        }
+
+        .btn-full {
+            width: 100%;
+            justify-content: center;
+            padding: 0.875rem;
+        }
+
+        .auth-footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .auth-footer a {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="auth-container animate-fade-in">
+        <div class="auth-card fade-in" id="signup-card">
+            <a href="index.html" class="logo" style="margin-bottom: 2rem; display: inline-block;">
+                <i class="ph-fill ph-tag-chevron" style="color: var(--primary-color);"></i>
+                Cou-<span>pong</span>
+            </a>
+
+            <h2 id="auth-title" style="margin-bottom: 0.5rem;">Create Account</h2>
+            <p id="auth-subtitle" style="color: var(--text-secondary); margin-bottom: 2rem;">Join for free and start
+                saving today.</p>
+
+            <!-- Signup Form -->
+            <form id="signup-form">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" class="form-input" id="name" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" class="form-input" id="email" placeholder="john@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-input" id="password" placeholder="Min. 8 characters" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Sign Up</button>
+            </form>
+
+            <!-- OTP Form Removed -->
+
+            <div class="auth-footer" id="auth-footer">
+                Already have an account? <a href="login.html" style="color: var(--primary-color); font-weight: 600;">Log
+                    In</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const signupForm = document.getElementById('signup-form');
+            const title = document.getElementById('auth-title');
+            const subtitle = document.getElementById('auth-subtitle');
+
+            signupForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = signupForm.querySelector('button');
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                if (password.length < 8) {
+                    alert('Password must be at least 8 characters long.');
+                    return;
+                }
+
+                btn.disabled = true;
+                btn.innerHTML = 'Sending Link...';
+
+                try {
+                    const result = await auth.requestSignup(name, email, password);
+
+                    if (result.success) {
+                        signupForm.style.display = 'none';
+                        title.textContent = "Check Your Email";
+                        subtitle.innerHTML = `We sent a verification link to <strong>${email}</strong>.<br>Please click it to activate your account.`;
+                    } else {
+                        alert(result.error);
+                        btn.disabled = false;
+                        btn.innerHTML = 'Sign Up';
+                    }
+                } catch (error) {
+                    alert('Error: ' + error);
+                    btn.disabled = false;
+                    btn.innerHTML = 'Sign Up';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

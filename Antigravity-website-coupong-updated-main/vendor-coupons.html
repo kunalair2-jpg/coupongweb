@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Coupons | Cou-pong Business</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        :root {
+            --business-primary: #4F46E5;
+        }
+
+        .sidebar-link.active {
+            background: #EEF2FF;
+            color: var(--business-primary);
+        }
+
+        .btn-primary {
+            background: var(--business-primary);
+            border-color: var(--business-primary);
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="vendor-dashboard.html" class="logo">
+                <i class="ph-fill ph-tag-chevron" style="color: var(--business-primary);"></i>
+                Cou-<span>pong</span>
+                <span
+                    style="font-size: 0.8rem; background: #EEF2FF; padding: 2px 8px; border-radius: 4px; margin-left: 10px; color: var(--business-primary); font-weight: 600;">Partner</span>
+            </a>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="text-align: right;">
+                    <div style="font-weight: 600;" id="vendor-name-display">Loading...</div>
+                </div>
+                <div style="width: 40px; height: 40px; background: #E0E7FF; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--business-primary); font-weight: bold;"
+                    id="vendor-initials">
+                    B
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <nav class="sidebar-menu">
+                <a href="vendor-dashboard.html" class="sidebar-link"><i class="ph-bold ph-squares-four"></i>
+                    Dashboard</a>
+                <a href="vendor-create-coupon.html" class="sidebar-link"><i class="ph-bold ph-plus-circle"></i> Create
+                    Coupon</a>
+                <a href="vendor-coupons.html" class="sidebar-link active"><i class="ph-bold ph-tag"></i> Coupons</a>
+                <a href="vendor-analytics.html" class="sidebar-link"><i class="ph-bold ph-chart-line-up"></i>
+                    Analytics</a>
+                <a href="vendor-profile.html" class="sidebar-link"><i class="ph-bold ph-storefront"></i> Store
+                    Profile</a>
+                <a href="#" class="sidebar-link" onclick="auth.logout()"
+                    style="margin-top: auto; color: var(--danger-color);"><i class="ph-bold ph-sign-out"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <main class="dashboard-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1 style="font-size: 1.8rem;">My Coupons</h1>
+                <a href="vendor-create-coupon.html" class="btn btn-primary"><i class="ph-bold ph-plus"></i> Create
+                    New</a>
+            </div>
+
+            <div id="coupons-list-container">
+                <div
+                    style="background: white; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 2rem; text-align: center; color: var(--text-secondary);">
+                    <i class="ph ph-spinner" style="font-size: 2rem; animation: spin 1s linear infinite;"></i>
+                    <p style="margin-top: 10px;">Loading coupons...</p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/vendor-sim.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const session = auth.getSession();
+            if (!session || session.type !== 'vendor') {
+                window.location.href = 'vendor-login.html';
+                return;
+            }
+
+            document.getElementById('vendor-name-display').textContent = session.businessName || 'Business';
+            document.getElementById('vendor-initials').textContent = (session.businessName || 'B').charAt(0).toUpperCase();
+
+            // Fetch
+            async function loadData() {
+                try {
+                    const res = await fetch(`http://localhost:5000/api/vendor/coupons?email=${encodeURIComponent(session.email)}`);
+                    const data = await res.json();
+                    if (data.success) {
+                        renderCoupons(data.coupons || []);
+                        return;
+                    }
+                } catch (e) {
+                    console.warn("Backend offline. Using VendorSim.");
+                    const list = VendorSim.getCoupons(session.email);
+                    renderCoupons(list);
+                }
+            }
+
+            function renderCoupons(coupons) {
+                const container = document.getElementById('coupons-list-container');
+                if (coupons && coupons.length > 0) {
+                    let html = `
+                    <div style="background: white; border-radius: var(--radius-lg); border: 1px solid var(--border-color); overflow: hidden;">
+                        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                            <thead style="background: var(--surface-color); border-bottom: 1px solid var(--border-color);">
+                                <tr>
+                                    <th style="padding: 1rem;">Title</th>
+                                    <th style="padding: 1rem;">Type</th>
+                                    <th style="padding: 1rem;">Value</th>
+                                    <th style="padding: 1rem;">Views</th>
+                                    <th style="padding: 1rem;">Status</th>
+                                    <th style="padding: 1rem;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+
+                    coupons.forEach(coupon => {
+                        html += `
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 1rem; font-weight: 500;">${coupon.title}</td>
+                            <td style="padding: 1rem; text-transform: capitalize;">${coupon.type}</td>
+                            <td style="padding: 1rem;">${coupon.type === 'percentage' ? coupon.value + '%' : (coupon.type === 'b1g1' ? '-' : '$' + coupon.value)}</td>
+                            <td style="padding: 1rem;">${coupon.views || 0}</td>
+                            <td style="padding: 1rem;">
+                                <span style="background: ${coupon.status === 'active' ? '#ECFDF5' : '#FFF7ED'}; color: ${coupon.status === 'active' ? '#059669' : '#C2410C'}; padding: 4px 10px; border-radius: 999px; font-size: 0.85rem; font-weight: 600;">
+                                    ${coupon.status.toUpperCase()}
+                                </span>
+                            </td>
+                            <td style="padding: 1rem;">
+                                <button class="btn btn-text" style="padding: 0; color: var(--business-primary);" onclick="alert('Edit feature coming soon')">Edit</button>
+                            </td>
+                        </tr>`;
+                    });
+
+                    html += `</tbody></table></div>`;
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = `
+                     <div style="background: white; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 2rem; text-align: center; color: var(--text-secondary);">
+                        <i class="ph ph-ticket" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <p>No coupons found.</p>
+                        <a href="vendor-create-coupon.html" class="btn btn-primary" style="margin-top: 1rem;">Create One</a>
+                    </div>`;
+                }
+            }
+
+            loadData();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In | Cou-pong</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body {
+            background: var(--surface-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 440px;
+            background: white;
+            padding: 2.5rem;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.75rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .message-box {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .message-box.error {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .message-box.success {
+            background: #dcfce7;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 71, 87, 0.1);
+        }
+
+        .btn-full {
+            width: 100%;
+            justify-content: center;
+            padding: 0.875rem;
+        }
+
+        .auth-footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .auth-footer a {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="auth-container animate-fade-in">
+        <div class="auth-header">
+            <a href="index.html" class="logo" style="display: inline-flex; margin-bottom: 1rem; font-size: 1.5rem;">
+                <i class="ph-fill ph-tag-chevron"></i>
+                Cou-<span>pong</span>
+            </a>
+            <h1 class="auth-title">Welcome Back</h1>
+            <p style="color: var(--text-secondary);">Access your exclusive deals.</p>
+        </div>
+
+        <div id="message-box" class="message-box"></div>
+
+        <form id="login-form">
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" id="email" class="form-input" placeholder="you@example.com" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">
+                Log In
+            </button>
+        </form>
+
+        <!-- OTP Form Removed -->
+
+        <div class="auth-footer" id="auth-footer">
+            Don't have an account? <a href="signup.html">Sign Up</a>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('login-form');
+            const msg = document.getElementById('message-box');
+
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = loginForm.querySelector('button');
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                btn.disabled = true;
+                btn.innerHTML = 'Logging in...';
+
+                try {
+                    const result = await auth.requestLogin(email, password);
+
+                    if (result.success) {
+                        showMessage('Login successful! Redirecting...', 'success');
+                        const params = new URLSearchParams(window.location.search);
+                        const redirect = params.get('redirect') || 'index.html';
+                        setTimeout(() => window.location.href = redirect, 1000);
+                    } else {
+                        showMessage(result.error, 'error');
+                        btn.disabled = false;
+                        btn.innerHTML = 'Log In';
+                    }
+                } catch (error) {
+                    showMessage('Unexpected error', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = 'Log In';
+                }
+            });
+
+            function showMessage(text, type) {
+                msg.textContent = text;
+                msg.className = `message-box ${type}`;
+                msg.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+
+</html>

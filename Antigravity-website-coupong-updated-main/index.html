@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cou-pong | Discover the Best Deals</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Leaflet Map CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/search-enhanced.css">
+    <link rel="stylesheet" href="css/dropdown.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <i class="ph-fill ph-tag-chevron"></i>
+                Cou-<span>pong</span>
+            </a>
+
+
+
+            <div class="nav-links">
+                <a href="index.html" class="nav-link active">Deals</a>
+
+                <a href="#map-section" class="nav-link">Map View</a>
+                <a href="membership.html" class="nav-link" style="color: var(--secondary-color); font-weight: 600;"><i
+                        class="ph-fill ph-crown"></i> Membership</a>
+                <a href="extra-discounts.html" class="nav-link" style="color: #E91E63; font-weight: 600;"><i
+                        class="ph-fill ph-percent"></i> Extra Discounts</a>
+                <a href="cart.html" class="nav-link" style="position: relative; margin-right: 1rem;">
+                    <i class="ph-fill ph-shopping-cart" style="font-size: 1.25rem;"></i>
+                    <span class="cart-count-badge"
+                        style="position: absolute; top: -5px; right: -10px; background: var(--primary-color); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; display: none;">0</span>
+                </a>
+                <div class="nav-actions" id="nav-actions-container">
+                    <a href="vendor-signup.html" class="btn btn-text"
+                        style="font-weight: 600; color: var(--text-main); margin-right: 0.5rem;">For Businesses</a>
+                    <span style="border-right: 1px solid var(--border-color); height: 24px; margin: 0 0.5rem;"></span>
+                    <a href="login.html" class="btn btn-text">Log In</a>
+                    <a href="signup.html" class="btn btn-primary">Sign Up</a>
+                </div>
+            </div>
+
+            <button class="btn-text mobile-menu-btn" id="mobile-menu-toggle">
+                <i class="ph ph-list" style="font-size: 1.5rem;"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobile-menu">
+            <input type="text" class="form-input" id="mobile-search" placeholder="Search deals...">
+            <a href="index.html" class="nav-link">Deals</a>
+
+            <a href="login.html" class="btn btn-text" style="justify-content: flex-start;">Log In</a>
+            <a href="signup.html" class="btn btn-primary" style="justify-content: center;">Sign Up</a>
+        </div>
+
+        <!-- Category Nav -->
+        <div class="category-nav">
+            <div class="container">
+                <ul class="category-list">
+                    <li class="category-item active"><i class="ph ph-fire"></i> Trending</li>
+                    <li class="category-item" data-cat="food"><i class="ph ph-fork-knife"></i> Food & Drink</li>
+                    <li class="category-item" data-cat="health"><i class="ph ph-heart-beat"></i> Health & Fitness</li>
+                    <li class="category-item" data-cat="beauty"><i class="ph ph-sparkle"></i> Beauty & Wellness</li>
+                    <li class="category-item" data-cat="family"><i class="ph ph-baby"></i> Family</li>
+                    <li class="category-item" data-cat="digital"><i class="ph ph-monitor"></i> Digital</li>
+                    <li class="category-item" data-cat="home"><i class="ph ph-house"></i> Home</li>
+                    <li class="category-item" data-cat="grocery"><i class="ph ph-basket"></i> Grocery</li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="container hero-content animate-fade-in">
+            <h1 class="hero-title">Discover the Best<br>Deals Around You</h1>
+            <p class="hero-subtitle">Save up to 70% on dining, wellness, and local experiences.</p>
+
+            <!-- Professional Search Bar -->
+            <div class="hero-search-container">
+                <!-- 1. City Input -->
+                <div class="search-input-group group-location">
+                    <i class="ph-fill ph-map-pin"></i>
+                    <input type="text" id="city-input" placeholder="Select City" autocomplete="off">
+                    <div id="city-suggestions" class="suggestions-dropdown"></div>
+                </div>
+
+                <!-- 2. Locality Input -->
+                <div class="search-input-group group-locality" id="locality-group">
+                    <i class="ph-fill ph-navigation-arrow"></i>
+                    <input type="text" id="locality-input" placeholder="Select Locality" autocomplete="off" disabled>
+                    <div id="locality-suggestions" class="suggestions-dropdown"></div>
+                </div>
+
+                <!-- 3. Category/Keyword Input -->
+                <div class="search-input-group group-keyword" id="keyword-group">
+                    <i class="ph ph-magnifying-glass"></i>
+                    <input type="text" id="hero-search-input" placeholder="Search for 'pizza', 'spa'..." disabled
+                        autocomplete="off">
+                    <div id="keyword-suggestions" class="suggestions-dropdown"></div>
+                </div>
+
+                <!-- Search Button -->
+                <div class="search-btn-wrapper">
+                    <button class="btn btn-primary hero-search-btn" id="hero-search-btn">
+                        Search
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+
+        <!-- Featured Section -->
+        <section class="section" style="margin-top: 2rem;">
+            <div class="section-header"
+                style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+                <div>
+                    <h2 class="section-title" style="margin-bottom: 0.5rem;">Trending Near You</h2>
+                    <p style="color: var(--text-secondary);">Hot deals expiring soon in your area.</p>
+                </div>
+            </div>
+
+            <!-- Dynamic Deal Grid -->
+            <div class="deal-grid" id="deal-grid">
+                <!-- Deals injected by JS -->
+            </div>
+        </section>
+
+        <!-- Map Section -->
+        <section id="map-section" class="section" style="margin-top: 6rem;">
+            <h2 class="section-title">Explore on Map</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">Find deals within walking distance.</p>
+            <div id="main-map" class="map-container" style="height: 400px; z-index: 1;"></div>
+        </section>
+
+        <!-- Categories Section -->
+        <section id="categories" class="section" style="margin-top: 6rem;">
+            <h2 class="section-title">Popular Categories</h2>
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                <div class="category-card" onclick="filterByCategory('food')"
+                    style="background: white; padding: 2rem; border-radius: var(--radius-lg); text-align: center; border: 1px solid var(--border-color); cursor: pointer; transition: all 0.2s;">
+                    <i class="ph-fill ph-fork-knife"
+                        style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+                    <h3 style="font-size: 1.1rem;">Food & Drink</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;">240+ Deals</p>
+                </div>
+                <div class="category-card" onclick="filterByCategory('beauty')"
+                    style="background: white; padding: 2rem; border-radius: var(--radius-lg); text-align: center; border: 1px solid var(--border-color); cursor: pointer; transition: all 0.2s;">
+                    <i class="ph-fill ph-scissors" style="font-size: 2.5rem; color: #E91E63; margin-bottom: 1rem;"></i>
+                    <h3 style="font-size: 1.1rem;">Beauty</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;">120+ Deals</p>
+                </div>
+                <div class="category-card" onclick="filterByCategory('activity')"
+                    style="background: white; padding: 2rem; border-radius: var(--radius-lg); text-align: center; border: 1px solid var(--border-color); cursor: pointer; transition: all 0.2s;">
+                    <i class="ph-fill ph-barbell" style="font-size: 2.5rem; color: #2196F3; margin-bottom: 1rem;"></i>
+                    <h3 style="font-size: 1.1rem;">Fitness</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;">85+ Deals</p>
+                </div>
+                <div class="category-card" onclick="filterByCategory('grocery')"
+                    style="background: white; padding: 2rem; border-radius: var(--radius-lg); text-align: center; border: 1px solid var(--border-color); cursor: pointer; transition: all 0.2s;">
+                    <i class="ph-fill ph-basket" style="font-size: 2.5rem; color: #10B981; margin-bottom: 1rem;"></i>
+                    <h3 style="font-size: 1.1rem;">Grocery</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;">50+ Deals</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter Section -->
+        <section class="section"
+            style="margin-top: 6rem; background: var(--primary-color); border-radius: var(--radius-xl); padding: 4rem 2rem; text-align: center; color: white;">
+            <h2 class="section-title" style="color: white; border-color: white;">Get Weekly Top Deals</h2>
+            <p style="margin-bottom: 2rem; font-size: 1.1rem; opacity: 0.9;">Join 50,000+ others getting the best local
+                offers delivered to their inbox.</p>
+
+            <form style="display: flex; gap: 1rem; max-width: 500px; margin: 0 auto; flex-wrap: wrap;">
+                <input type="email" placeholder="Your email address"
+                    style="flex: 1; padding: 1rem; border-radius: var(--radius-full); border: none; outline: none; min-width: 250px;">
+                <button class="btn btn-secondary"
+                    style="background: #1F2937; border-color: #1F2937; color: white;">Subscribe</button>
+            </form>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col" style="flex: 1.5;">
+                    <a href="#" class="logo" style="margin-bottom: var(--spacing-md); display: inline-block;">
+                        <i class="ph-fill ph-tag-chevron" style="color: var(--primary-color);"></i>
+                        <span style="color: white;">Cou-pong</span>
+                    </a>
+                    <p style="color: var(--text-light); line-height: 1.6; max-width: 300px;">
+                        The smartest way to discover and save on local businesses. Smart deals for smart shoppers.
+                    </p>
+                </div>
+                <!-- ...SAME FOOTER CONTENT... -->
+                <div class="footer-bottom">
+                    <div>&copy; 2024 Cou-pong Inc. All rights reserved.</div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="js/data.js?v=2"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/app.js?v=2"></script>
+</body>
+
+</html>
