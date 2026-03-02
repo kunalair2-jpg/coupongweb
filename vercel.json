@@ -1,0 +1,12 @@
+{
+    "buildCommand": "cd coupong-react && npm install && npm run build",
+    "outputDirectory": "coupong-react/dist",
+    "installCommand": "cd coupong-react && npm install",
+    "framework": "vite",
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
+        }
+    ]
+}
