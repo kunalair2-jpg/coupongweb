@@ -20,6 +20,10 @@ await connectDB();
 // Allow requests from Vercel deployments, custom domain, and localhost
 const allowedOrigins = [
     process.env.FRONTEND_URL,                  // e.g. https://coupongweb.vercel.app
+    'https://www.coupong.in',                  // custom domain (www)
+    'https://coupong.in',                      // custom domain (root)
+    'http://www.coupong.in',                   // custom domain (http fallback)
+    'http://coupong.in',                       // custom domain (http root fallback)
     'http://localhost:5173',
     'http://localhost:3000',
 ].filter(Boolean);
@@ -30,6 +34,8 @@ app.use(cors({
         if (!origin) return callback(null, true);
         // Allow any vercel.app subdomain
         if (origin.endsWith('.vercel.app')) return callback(null, true);
+        // Allow any coupong.in subdomain or root
+        if (origin.endsWith('.coupong.in') || origin === 'https://coupong.in' || origin === 'http://coupong.in') return callback(null, true);
         // Allow explicitly listed origins
         if (allowedOrigins.includes(origin)) return callback(null, true);
         // Block everything else
