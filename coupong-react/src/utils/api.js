@@ -52,7 +52,7 @@ export const couponsAPI = {
     getMyCoupons: (getToken) => apiFetch('/api/coupons/vendor/my', {}, getToken),
     create: (data, getToken) => apiFetch('/api/coupons', { method: 'POST', body: data }, getToken),
     update: (id, data, getToken) => apiFetch(`/api/coupons/${id}`, { method: 'PATCH', body: data }, getToken),
-    delete: (id, getToken) => apiFetch(`/api/coupons/${id}`, { method: 'DELETE' }, getToken),
+    delete: (id, getToken) => apiFetch(`/api/coupons/${id}`, { method: 'DELETE' }, getToken),  // getToken required for auth
 };
 
 // ── Users API ─────────────────────────────────────────────────

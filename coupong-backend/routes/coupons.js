@@ -33,6 +33,18 @@ router.get('/', optionalAuth, async (req, res) => {
     }
 });
 
+// ── GET /api/coupons/vendor/my ──────────────────────────────────────────────
+// IMPORTANT: This must come BEFORE /:id to avoid Express matching 'vendor' as an ID
+// Vendor sees their own coupons (active + inactive)
+router.get('/vendor/my', protect, async (req, res) => {
+    try {
+        const coupons = await Coupon.find({ vendorId: req.auth.userId }).sort({ createdAt: -1 });
+        res.json(coupons);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // ── GET /api/coupons/:id ────────────────────────────────────────────────────
 router.get('/:id', optionalAuth, async (req, res) => {
     try {
@@ -42,17 +54,6 @@ router.get('/:id', optionalAuth, async (req, res) => {
         coupon.viewCount += 1;
         await coupon.save();
         res.json(coupon);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// ── GET /api/coupons/vendor/my ──────────────────────────────────────────────
-// Vendor sees their own coupons
-router.get('/vendor/my', protect, async (req, res) => {
-    try {
-        const coupons = await Coupon.find({ vendorId: req.auth.userId }).sort({ createdAt: -1 });
-        res.json(coupons);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -80,6 +81,7 @@ router.post('/', protect, async (req, res) => {
             originalPrice, discountedPrice,
             city, locality, lat, lng,
             membersOnly: !!membersOnly,
+            isActive: true,   // always visible on homepage after creation
             expiresOn: expiresOn ? new Date(expiresOn) : null,
             tags: Array.isArray(tags) ? tags : [],
         });
