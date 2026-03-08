@@ -447,13 +447,43 @@ export default function CheckoutPage() {
 
     const placeOrder = async () => {
         setPlacing(true);
-        // Simulate order processing
-        await new Promise(r => setTimeout(r, 2000));
-        const ref = 'CPN-' + Math.random().toString(36).slice(2, 8).toUpperCase();
-        setOrderRef(ref);
-        setDone(true);
-        clearCart();
-        setPlacing(false);
+        try {
+            // 1. Simulate payment processing (replace with real payment gateway later)
+            await new Promise(r => setTimeout(r, 2000));
+
+            // 2. Generate order reference
+            const ref = 'CPN-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+
+            // 3. Send WhatsApp confirmation ONLY if user selected WhatsApp delivery
+            if (form.delivery === 'whatsapp' && form.phone) {
+                const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                try {
+                    await fetch(`${apiBase}/api/notify/whatsapp`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            phone: form.phone,
+                            name: `${form.firstName} ${form.lastName}`.trim(),
+                            orderId: ref,
+                            items: cart.map(item => ({ title: item.title, qty: item.qty })),
+                            total,
+                            payMethod: form.payMethod,
+                        }),
+                    });
+                    // We intentionally ignore errors here — silent fallback.
+                    // WhatsApp failure should never block the user's order confirmation.
+                } catch (waErr) {
+                    console.warn('WhatsApp notification failed (silent fallback):', waErr.message);
+                }
+            }
+
+            // 4. Mark order as done
+            setOrderRef(ref);
+            setDone(true);
+            clearCart();
+        } finally {
+            setPlacing(false);
+        }
     };
 
     return (

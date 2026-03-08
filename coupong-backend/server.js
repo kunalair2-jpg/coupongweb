@@ -9,6 +9,7 @@ import couponRoutes from './routes/coupons.js';
 import userRoutes from './routes/users.js';
 import vendorRoutes from './routes/vendors.js';
 import orderRoutes from './routes/orders.js';
+import notifyRoutes from './routes/notify.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -62,6 +63,7 @@ app.use('/api/coupons', couponRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/vendors', vendorRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/notify', notifyRoutes);
 
 // ── 404 Handler ───────────────────────────────────────────
 app.use((req, res) => {
