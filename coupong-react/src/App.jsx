@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage';
 import DealPage from './pages/DealPage';
 import CartPage from './pages/CartPage';
 import CustomerDashboard from './pages/CustomerDashboard';
+import CheckoutPage from './pages/CheckoutPage';
 import VendorDashboard from './pages/VendorDashboard';
 import VendorLoginPage from './pages/VendorLoginPage';
 import VendorSignupPage from './pages/VendorSignupPage';
@@ -71,6 +72,7 @@ function Layout() {
 
         {/* Protected Customer */}
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/my-dashboard" element={
           <ProtectedRoute><CustomerDashboard /></ProtectedRoute>
         } />
